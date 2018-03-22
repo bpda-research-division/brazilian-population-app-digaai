@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+.window {
+    padding-top: 100px;
+    display: flex;
+    flex-direction: row;
+}
+
+.chart {
+    display: flex;
+    flex-direction: column;
+}
+
+.state-inner {
+  fill: none;
+}
+
+.state-inner path:hover {
+    fill: orange;
+}
+
+.states {
+  fill: none;
+  stroke: #fff;
+  stroke-linejoin: round;
+}
+
+.bar {
+  fill: steelblue;
+}
+
+.bar:hover {
+  fill: brown;
+  cursor: pointer;
+}
+
+.arc path {
+  stroke: #fff;
+}
+
+.arc path:hover {
+  fill: brown;
+  cursor: pointer;
+}
+
+.pie-axis line,
+.pie-axis path {
+    display: none;
+}
+/* d3-tip styles*/
+.tip {
+    line-height: 1;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.tip:after {
+    box-sizing: border-box;
+    display: inline;
+    font-size: 10px;
+    width: 100%;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.8);
+    content: "\25BC";
+    position: absolute;
+    text-align: center;
+}
+
+/* Style northward tooltips specifically */
+.tip.n:after {
+    margin: -2px 0 0 0;
+    top: 100%;
+    left: 0;
+}
+
+/* Navigation Bar */
+.navbar {
+    overflow: hidden;
+    background-color: #333;
+    font-family: Arial;
+}
+
+.navbar a {
+    float: left;
+    font-size: 16px;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.dropdown {
+    float: left;
+    overflow: hidden;
+}
+
+.dropdown .dropbtn {
+    cursor: pointer;
+    font-size: 16px;    
+    border: none;
+    outline: none;
+    color: white;
+    padding: 14px 16px;
+    background-color: inherit;
+}
+
+.navbar a:hover, .dropdown:hover .dropbtn {
+    background-color: red;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    float: none;
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.show {
+    display: block;
+}
+</style>
+
+<div class="navbar">
+    <a href="#" onclick="cluster()"> Show Cluster </a>
+    <div class="dropdown">
+        <button class="dropbtn" onclick="dropDown()"> Features
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content" id="selectFeature">
+        </div>
+    </div> 
+</div>
+
+<div class="window">
+    <svg id="map" width="960" height="600"></svg>
+    <div class="chart">
+        <svg id="bar" width="480" height = "300"></svg>
+        <svg id="pie" width="480" height = "350"></svg>
+    </div>
+</div>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="https://d3js.org/topojson.v2.min.js"></script>
+<script src="d3-tip.js"></script>
+
+<script>
+// variables
+var mapData = null,
+    chartData = null,
+    clusterData = null;
+    showCluster = false;
+
+var currFeature = 0;
+var currState = "01";
+var currGroup = "age detail";
+
+var mapSvg = d3.select("#map"),
+    mapPath = d3.geoPath(),
+    mapColor = null;
+
+var barSvg = d3.select("#bar"),
+    barMargin = {top: 20, right: 50, bottom: 100, left: 100},
+    barWidth = +barSvg.attr("width") - barMargin.left - barMargin.right,
+    barHeight = +barSvg.attr("height") - barMargin.top - barMargin.bottom;
+
+var pieSvg = d3.select("#pie"),
+    pieMargin = {top: 0, right: 0, bottom: 100, left: 0},
+    pieWidth = +pieSvg.attr("width") - pieMargin.left - pieMargin.right,
+    pieHeight = +pieSvg.attr("height") - pieMargin.top - pieMargin.bottom,
+    pieRadius = Math.min(pieWidth, pieHeight) / 2;
+
+var groups = ["population", "age detail", "age summary", "gender", "marriage", "citizen", 
+              "enter time", "education", "civilian labor force", "unemployed", "employment type",
+              "employment by industry", "employment by occupation", "income" ];
+
+var mapTip = d3.tip()
+                .attr("class", "tip")
+                .offset([-8, 0])
+                .html(d => chartData[currFeature][""] + " : " + chartData[currFeature][d.id]);
+
+var barTip = d3.tip()
+                .attr("class", "tip")
+                .offset([-8, 0])
+                .html(d => d[""] + " : " + d[currState]);
+
+var pieTip = d3.tip()
+                .attr("class", "tip")
+                .offset([-8, 0])
+                .html(d => d.data[""] + " : " + d.data[currState]);
+
+mapSvg.call(mapTip);
+barSvg.call(barTip);
+pieSvg.call(pieTip);
+
+function getGroup(data, group, changeFeature = false) {
+    start = 0;
+    end = 0;
+    switch(group) {
+        case "population": start = 0; end = 1;
+            break;
+        case "age detail": start = 1; end = 19;
+            break;
+        case "age summary": start = 19; end = 23;
+            break;
+        case "gender": start = 23; end = 25;
+            break;
+        case "marriage": start = 25; end = 30;
+            break;
+        case "citizen": start = 30; end = 32;
+            break;
+        case "enter time": start = 32; end = 34;
+            break;
+        case "education": start = 34; end = 37;
+            break;
+        case "civilian labor force": start = 37; end = 39;
+            break;
+        case "unemployed": start = 39; end = 41;
+            break;
+        case "employment type": start = 41; end = 45;
+            break;
+        case "employment by industry": start = 45; end = 52;
+            break;
+        case "employment by occupation": start = 52; end = 60;
+            break;
+        case "income": start = 60; end = 63;
+            break;
+    }
+    if(changeFeature)
+        currFeature = d3.min([d3.max([start, currFeature]), end - 1]);
+
+    return data.slice(start, end);
+}
+
+// util functions 
+function rowMax(data) {
+    m = -Infinity;
+    for(var k in data) {
+        if(k) {
+            v = data[k];
+            if(m < v) m = v;
+        }
+    }
+    return m;
+}
+
+function columnMax(group, state) {
+    m = -Infinity;
+    for(i = 0; i < group.length; ++i) {
+        v = group[i][state];
+        if(m < v) m = v;
+    }
+    return m;
+}
+
+function dataPreprocess(data) {
+    rst = {};
+    for(i = 0; i < data.length; ++i) {
+        for(var k in data[i]) {
+            if(k) {
+                numStr = data[i][k].replace(/[,$ ]/g, '');
+                data[i][k] = parseFloat(numStr);
+            } 
+        }
+    }
+    return data;
+}
+
+function stateMapColor(d) {
+    c = chartData[currFeature][d.id]
+    return mapColor(c);
+}
+
+//load data
+d3.queue()
+    .defer(d3.json, "us-10m.v1.json")
+    .defer(d3.csv, "all_data.csv")
+    .defer(d3.csv, "id_label.csv")
+    .await(dataReady);
+
+// callbacks
+function mouseOver(d, i) {
+    mapTip.show(d, i);
+    currState = d.id;
+    showBarChart();
+    showPieChart();
+}
+
+function dataReady(error, us, data, cluster) {
+    if (error) throw error;
+    mapData = us;
+    chartData = dataPreprocess(data);
+    clusterData = cluster[0];
+    showMap();
+}
+
+function clickFeature(d, i) {
+    chartData.forEach((e, i) => {
+        if(e[""] == d[""]) currFeature = i;
+    });
+    showMap();
+}
+
+function clickPie(d, i) {
+    clickFeature(d.data, i);
+}
+
+function showMap() {
+    mapSvg.selectAll("g").remove();
+    mapSvg.selectAll("path").remove();
+    mapColor = null;
+    if(showCluster) {
+        scale = d3.scaleLinear()
+                    .domain([0, rowMax(chartData[currFeature])])
+                    .range([0, 0.7]);
+        
+        color = d3.scaleOrdinal(d3.schemeCategory20c);
+        mapColor = (d) => {
+            c = d3.rgb(color(clusterData[d.id]));
+            c.opacity = 0.3 + scale(chartData[currFeature][d.id]);
+            return c;
+        }; 
+    } else {
+        color = d3.scaleLinear()
+                    .domain([0, rowMax(chartData[currFeature])])
+                    .range(['#c6dbef', '#08306b']);
+        mapColor = (d) => { 
+            return color(chartData[currFeature][d.id])
+        };
+    }
+
+    mapSvg.append("g")
+            .attr("class", "state-inner")
+            .selectAll("path")
+            .data(topojson.feature(mapData, mapData.objects.states).features)
+            .enter().append("path")
+            .attr("fill", d => mapColor(d))
+            .attr("d", mapPath)
+            .on("mouseover", mouseOver)
+            .on("mouseleave", mapTip.hide);
+
+    mapSvg.append("path")
+            .datum(topojson.mesh(mapData, mapData.objects.states, (a, b) => a !== b))
+            .attr("class", "states")
+            .attr("d", mapPath);
+}
+
+function showBarChart() {
+    // clean last output
+    barSvg.select("g").remove();
+
+    if(currGroup === "population") return;
+
+    data = getGroup(chartData, currGroup);
+
+    x = d3.scaleBand().rangeRound([0, barWidth]).padding(0.1),
+    y = d3.scaleLinear().rangeRound([barHeight, 0]);
+
+    x.domain(data.map(d => d[""]));
+    y.domain([0, columnMax(data, currState)]);
+
+    let g = barSvg.append("g")
+                    .attr("transform", "translate(" + barMargin.left + "," + barMargin.top + ")");
+
+    g.append("g")
+        .attr("transform", "translate(0," + barHeight + ")")
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .attr("y", 0)
+        .attr("x", 9)
+        .attr("dy", ".35em")
+        .attr("transform", "rotate(90)")
+        .style("text-anchor", "start");
+
+    g.append("g")
+        .call(d3.axisLeft(y))
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", "0.71em")
+        .attr("text-anchor", "end")
+        .text("Frequency");
+
+    g.selectAll(".bar")
+        .data(data)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", d => x(d[""]))
+        .attr("y", d => y(d[currState]))
+        .attr("width", x.bandwidth())
+        .attr("height", d => barHeight - y(d[currState]))
+        .on("click", clickFeature)
+        .on("mouseover", barTip.show)
+        .on("mouseout", barTip.hide);
+}
+
+function showPieChart() {
+    // clean last output
+    pieSvg.selectAll("g").remove();
+    
+    if(currGroup === "population") return;
+
+    data = getGroup(chartData, currGroup);
+
+    g = pieSvg.append("g").attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")"),
+    pieColor = d3.scaleOrdinal(d3.schemeCategory20c);
+
+    pie = d3.pie()
+            .sort(null)
+            .value(d => d[currState]);
+    
+    piePath = d3.arc()
+                .outerRadius(pieRadius - 10)
+                .innerRadius(0);
+
+
+    arc = g.selectAll(".arc")
+                .data(pie(data))
+                .enter().append("g")
+                .attr("class", "arc");
+
+    arc.append("path")
+        .attr("d", piePath)
+        .attr("fill", d => pieColor(d.data[""]))
+        .on("click", clickPie)
+        .on("mouseover", pieTip.show)
+        .on("mouseout", pieTip.hide);
+    
+    wid = data.length * 12;
+    x = d3.scaleBand().rangeRound([0, wid]).padding(0.1);
+    x.domain(data.map(d => d[""]));
+
+    barSize = x.bandwidth();
+    g = g.append("g").attr("transform", "translate(" + -pieWidth / 4 + "," + pieHeight / 2 + ")")
+    g.selectAll(".bar")
+        .data(data)
+        .enter().append("rect")
+        .attr("x", d => x(d[""]))
+        .attr("y", 6)
+        .attr("width", barSize)
+        .attr("height", barSize)
+        .attr("fill", d => pieColor(d[""]));
+    
+    g.append("g")
+        .attr("class", "pie-axis")
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .attr("y", -barSize / 2)
+        .attr("x", 10 + barSize)
+        .attr("transform", "rotate(90)")
+        .style("text-anchor", "start");
+}
+
+//UI function
+function dropDown() {
+    dropDownEle = d3.select("#selectFeature");
+    if(dropDownEle.classed("show")) {
+        dropDownEle.classed("show", false);
+    } else {
+        dropDownEle.classed("show", true);
+        dropDownEle.selectAll("a")
+                    .data(groups)
+                    .enter().append("a")
+                    .text(d => d)
+                    .attr("href", "#")
+                    .on("click", clickFeatureGroup);
+    }
+}
+
+function cluster() {
+    showCluster = !showCluster;
+    showMap()
+}
+
+function clickFeatureGroup(d, i) {
+    dropDownEle = d3.select("#selectFeature");
+    dropDownEle.classed("show", false);
+    currGroup = d;
+    getGroup(chartData, d, true);
+    showMap();
+    showBarChart();
+    showPieChart();
+}
+</script>
