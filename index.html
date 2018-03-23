@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<!-- saved from url=(0058)https://newsignature.github.io/us-map/#usage-style-options -->
+<html class="js no-flexbox canvas canvastext webgl touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths gr__newsignature_github_io" lang="en"><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>Digaii - </title>
+  <meta name="description" content="">
+
+  <!-- Mobile viewport optimized: h5bp.com/viewport -->
+  <meta name="viewport" content="width=device-width">
+
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+
+</script><script src="./js/modernizr-2.5.3.min.js.download"></script>
+
+<body data-gr-c-s-loaded="true">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="css/style2.css" />
+
+
+
+<div id="navbar" class="navbar">
+    <div id="dropdown" class="dropdown">
+        <button class="dropbtn" onclick="dropDown()"> Features
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content" id="selectFeature">
+        </div>
+    </div> 
+</div>
+<div class="window">
+    <svg id="map" width="960" height="600"></svg>
+    <div class="chart">
+        <svg id="bar" width="480" height = "300"></svg>
+        <svg id="pie" width="480" height = "350"></svg>
+    </div>
+</div>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="https://d3js.org/topojson.v2.min.js"></script>
+
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+</script><script src="./js/variables.js"></script>   
+
+  <header id="overview" class="overview">
+    <div class="container-fluid">
+      <div class="row-fluid clearfix">
+  
+  <div role="main" class="container-fluid multiarticles">
+    <article id="demo">
+      <header class="page-header">
+	  <h1>Demo for Digaii</h1>
+	  <h2><small>Click on the state to see the result</small></h2>
+	  </header>
+        <div class="row-fluid">
+          <div class="span6">
+            <div class="example">
+              <div class="results">
+                <h5>Results</h5>
+                <div id="clicked-state">Click on a state</div></div>
+              <div class="map" id="map"><svg height="0" version="1.1" width="0" xmlns="http://www.w3.org/2000/svg"
+			  style="overflow: hidden; position: relative; top: 0.75px;" viewBox="0 0 1030 630" preserveAspectRatio="xMinYMin">
+			  </div>
+          </div>
+        </div>
+    </article>
+  <!-- JavaScript at the bottom for fast page loading -->
+
+  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+  <script src="./js/jquery.min.js.download"></script>
+  <script>window.jQuery || document.write('<script src="js/libs/jquery-1.7.1.min.js"><\/script>')</script>
+
+  <!-- scripts concatenated and minified via build script -->
+  <script src="./js/bootstrap.js.download"></script>
+  <script src="./js/raphael.js.download"></script>
+  <script src="./js/jquery.usmap.js.download"></script>
+  <script>
+    var currState = 'OK';
+	var chartData = null;
+    $('body').scrollspy({offset: $('#nav').outerHeight()+10, target: '#nav'})
+    $('body')
+      .on('click', 'a', function(event) {
+        var link = $(event.target);
+        var toElement = $(link.attr('href'));
+        if(toElement.length) {
+          var top = toElement.offset().top - $('#nav').outerHeight();
+          $('html, body').animate({scrollTop: top}, 1000);
+        }
+      });
+      
+        
+    $('#map').usmap({
+      'stateStyles': {
+        fill: "#4ECDC4",
+        stroke: "#41A59B",
+        "stroke-width": 1,
+        "stroke-linejoin": "round",
+        scale: [1, 1]
+      },
+      'stateHoverStyles': {
+        fill: "#C7F464",
+        stroke: "#ADCC56",
+        scale: [1.1, 1.1]
+      },
+      'labelBackingStyles': {
+        fill: "#4ECDC4",
+        stroke: "#41A59B",
+        "stroke-width": 1,
+        "stroke-linejoin": "round",
+        scale: [1, 1]
+      },
+      
+      // The styles for the hover
+      'labelBackingHoverStyles': {
+        fill: "#C7F464",
+        stroke: "#ADCC56",
+      },
+      'labelTextStyles': {
+      fill: "#222",
+        'stroke': 'none',
+        'font-weight': 300,
+        'stroke-width': 0,
+        'font-size': '10px'
+      },
+      click: function(event, data) {
+		currState = data.name;
+        $('#clicked-state').text('You clicked: '+currState+' AND '+currGroup).parent().effect('highlight', {color: '#C7F464'}, 2000);
+      }
+    });
+  </script>
+</body>
+
