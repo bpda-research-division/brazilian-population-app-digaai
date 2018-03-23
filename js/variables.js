@@ -26,6 +26,6 @@ function clickFeatureGroup(d, i) {
     dropDownEle = d3.select("#selectFeature");
     dropDownEle.classed("show", false);
     currGroup = d;
-	$('#clicked-state').text('You clicked: '+currState+' AND '+currGroup).parent().effect('highlight', {color: '#C7F464'}, 2000);
+	$('#clicked-state').text('You clicked: '+currState+' AND '+currGroup);
 	
 }

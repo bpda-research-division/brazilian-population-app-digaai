@@ -79,12 +79,18 @@
   <script src="./js/raphael.js.download"></script>
   <script src="./js/jquery.usmap.js.download"></script>
   <script>
+    var all_data = null;
 	
 	d3.csv("http://aaell.me/resources/all_data.csv", function(data) {
-	  console.log(data[0][0]);
+	  all_data = data;
+	  console.log(data[0]);
+	  dataReady(all_data);
+	  showBarChart();
 	});
 
-  
+    function dataReady(data) {
+		chartData = dataPreprocess(data);
+	}
 
     var currState = 'OK';
 	var chartData = null;
@@ -98,6 +104,70 @@
           $('html, body').animate({scrollTop: top}, 1000);
         }
       });
+	  
+	  
+	function showBarChart() {
+		// clean last output
+		barSvg.select("g").remove();
+
+		if(currGroup === "population") return;
+
+		data = getGroup(chartData, currGroup);
+
+		x = d3.scaleBand().rangeRound([0, barWidth]).padding(0.1),
+		y = d3.scaleLinear().rangeRound([barHeight, 0]);
+
+		x.domain(data.map(d => d[""]));
+		y.domain([0, columnMax(data, currState)]);
+
+		let g = barSvg.append("g")
+						.attr("transform", "translate(" + barMargin.left + "," + barMargin.top + ")");
+
+		g.append("g")
+			.attr("transform", "translate(0," + barHeight + ")")
+			.call(d3.axisBottom(x))
+			.selectAll("text")
+			.attr("y", 0)
+			.attr("x", 9)
+			.attr("dy", ".35em")
+			.attr("transform", "rotate(90)")
+			.style("text-anchor", "start");
+
+		g.append("g")
+			.call(d3.axisLeft(y))
+			.append("text")
+			.attr("transform", "rotate(-90)")
+			.attr("y", 6)
+			.attr("dy", "0.71em")
+			.attr("text-anchor", "end")
+			.text("Frequency");
+
+		g.selectAll(".bar")
+			.data(data)
+			.enter().append("rect")
+			.attr("class", "bar")
+			.attr("x", d => x(d[""]))
+			.attr("y", d => y(d[currState]))
+			.attr("width", x.bandwidth())
+			.attr("height", d => barHeight - y(d[currState]))
+			.on("click", clickFeature)
+			.on("mouseover", barTip.show)
+			.on("mouseout", barTip.hide);
+	}
+	  
+	  
+    function dataPreprocess(data) {
+		rst = {};
+		for(i = 0; i < data.length; ++i) {
+			for(var k in data[i]) {
+				if(k) {
+					numStr = data[i][k].replace(/[,$ ]/g, '');
+					data[i][k] = parseFloat(numStr);
+				} 
+			}
+		}
+		return data;
+	}
       
         
     $('#map').usmap({
@@ -136,6 +206,8 @@
       click: function(event, data) {
 		currState = data.name;
         $('#clicked-state').text('You clicked: '+currState+' AND '+currGroup);
+		showBarChart();
+
       }
     });
   </script>
