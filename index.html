@@ -79,10 +79,12 @@
   <script src="./js/raphael.js.download"></script>
   <script src="./js/jquery.usmap.js.download"></script>
   <script>
-  
+	
 	d3.csv("http://aaell.me/resources/all_data.csv", function(data) {
 	  console.log(data[0][0]);
 	});
+
+  
 
     var currState = 'OK';
 	var chartData = null;
@@ -133,7 +135,7 @@
       },
       click: function(event, data) {
 		currState = data.name;
-        $('#clicked-state').text('You clicked: '+currState+' AND '+currGroup).parent().effect('highlight', {color: '#C7F464'}, 2000);
+        $('#clicked-state').text('You clicked: '+currState+' AND '+currGroup);
       }
     });
   </script>
