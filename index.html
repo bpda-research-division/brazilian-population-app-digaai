@@ -30,22 +30,16 @@
         </div>
     </div> 
 </div>
-<div class="window">
-    <svg id="map" width="960" height="600"></svg>
-    <div class="chart">
-        <svg id="bar" width="480" height = "300"></svg>
-        <svg id="pie" width="480" height = "350"></svg>
-    </div>
-</div>
+
+
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://d3js.org/topojson.v2.min.js"></script>
-
-
 <script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3-queue.v3.min.js"></script>
+
 
 </script><script src="./js/variables.js"></script>   
-
   <header id="overview" class="overview">
     <div class="container-fluid">
       <div class="row-fluid clearfix">
@@ -78,22 +72,109 @@
   <script src="./js/bootstrap.js.download"></script>
   <script src="./js/raphael.js.download"></script>
   <script src="./js/jquery.usmap.js.download"></script>
+    <div class="window">
+        <svg id="map" width="960" height="600"></svg>
+        <div class="chart">
+            <svg id="bar" width="480" height = "300"></svg>
+            <svg id="pie" width="480" height = "350"></svg>
+        </div>
+    </div>
+  
   <script>
-    var all_data = null;
-	
-	d3.csv("http://aaell.me/resources/all_data.csv", function(data) {
-	  all_data = data;
-	  console.log(data[0]);
-	  dataReady(all_data);
-	  showBarChart();
-	});
+    var chartData = null;
+  
+    var barSvg = d3.select("#bar"),
+        barMargin = {top: 20, right: 50, bottom: 100, left: 100},
+        barWidth = +barSvg.attr("width") - barMargin.left - barMargin.right,
+        barHeight = +barSvg.attr("height") - barMargin.top - barMargin.bottom;
 
-    function dataReady(data) {
-		chartData = dataPreprocess(data);
-	}
+    var pieSvg = d3.select("#pie"),
+        pieMargin = {top: 0, right: 0, bottom: 100, left: 0},
+        pieWidth = +pieSvg.attr("width") - pieMargin.left - pieMargin.right,
+        pieHeight = +pieSvg.attr("height") - pieMargin.top - pieMargin.bottom,
+        pieRadius = Math.min(pieWidth, pieHeight) / 2;
 
+
+  
+	function getGroup(Cdata, group, changeFeature = false) {
+        start = 0;
+        end = 0;
+        console.log(Cdata)
+        switch(group) {
+            case "population": start = 0; end = 1;
+                break;
+            case "age detail": start = 1; end = 19;
+                break;
+            case "age summary": start = 19; end = 23;
+                break;
+            case "gender": start = 23; end = 25;
+                break;
+            case "marriage": start = 25; end = 30;
+                break;
+            case "citizen": start = 30; end = 32;
+                break;
+            case "enter time": start = 32; end = 34;
+                break;
+            case "education": start = 34; end = 37;
+                break;
+            case "civilian labor force": start = 37; end = 39;
+                break;
+            case "unemployed": start = 39; end = 41;
+                break;
+            case "employment type": start = 41; end = 45;
+                break;
+            case "employment by industry": start = 45; end = 52;
+                break;
+            case "employment by occupation": start = 52; end = 60;
+                break;
+            case "income": start = 60; end = 63;
+                break;
+        }
+        if(changeFeature)
+            currFeature = d3.min([d3.max([start, currFeature]), end - 1]);
+
+        return Cdata.slice(start, end);
+    }
+
+    // util functions 
+    function rowMax(data) {
+        m = -Infinity;
+        for(var k in data) {
+            if(k) {
+                v = data[k];
+                if(m < v) m = v;
+            }
+        }
+        return m;
+    }
+
+    function columnMax(group, state) {
+        m = -Infinity;
+        for(i = 0; i < group.length; ++i) {
+            v = group[i][state];
+            if(m < v) m = v;
+        }
+        return m;
+    }
+
+    
+    d3.csv("http://aaell.me/resources/all_data.csv",
+        function(datacsv) {
+            var all_data = datacsv;
+            console.log(datacsv[0]);
+            chartData = dataPreprocess(all_data);
+            showBarChart(chartData);
+            console.log("finished")
+        }
+    );
     var currState = 'OK';
-	var chartData = null;
+    var stateToInt = {
+      'OK': "01",
+      'MA': "02",
+      'WA': "03",
+      'CA': "04"       //01,02,04,05,06,08,09,10,11,12,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,44,45,46,47,48,49,50,51,53,54,55,56
+    };    
+    
     $('body').scrollspy({offset: $('#nav').outerHeight()+10, target: '#nav'})
     $('body')
       .on('click', 'a', function(event) {
@@ -104,24 +185,31 @@
           $('html, body').animate({scrollTop: top}, 1000);
         }
       });
-	  
-	  
-	function showBarChart() {
+      
+	function showBarChart(cData) {
 		// clean last output
 		barSvg.select("g").remove();
-
 		if(currGroup === "population") return;
 
-		data = getGroup(chartData, currGroup);
+		var currData = getGroup(cData, currGroup);
+        console.log(currData)
 
 		x = d3.scaleBand().rangeRound([0, barWidth]).padding(0.1),
 		y = d3.scaleLinear().rangeRound([barHeight, 0]);
 
-		x.domain(data.map(d => d[""]));
-		y.domain([0, columnMax(data, currState)]);
+		x.domain(currData.map(d => d[""]));
+		y.domain([0, columnMax(currData, stateToInt[currState])]);
+        function funcForY(d){
+            return y(d[stateToInt[currState]]);
+        }
+        function funcForH(d){
+             return barHeight - y(d[stateToInt[currState]]);
+        }
+        
 
 		let g = barSvg.append("g")
 						.attr("transform", "translate(" + barMargin.left + "," + barMargin.top + ")");
+        console.log("checkpoint3")
 
 		g.append("g")
 			.attr("transform", "translate(0," + barHeight + ")")
@@ -132,6 +220,7 @@
 			.attr("dy", ".35em")
 			.attr("transform", "rotate(90)")
 			.style("text-anchor", "start");
+        console.log("checkpoint4")
 
 		g.append("g")
 			.call(d3.axisLeft(y))
@@ -141,32 +230,39 @@
 			.attr("dy", "0.71em")
 			.attr("text-anchor", "end")
 			.text("Frequency");
-
+        console.log("checkpoint5")
+            
 		g.selectAll(".bar")
-			.data(data)
+			.data(currData)
 			.enter().append("rect")
 			.attr("class", "bar")
-			.attr("x", d => x(d[""]))
-			.attr("y", d => y(d[currState]))
+			.attr("x", d => x(d[""])) 
+			.attr("y", funcForY) //error here
 			.attr("width", x.bandwidth())
-			.attr("height", d => barHeight - y(d[currState]))
-			.on("click", clickFeature)
-			.on("mouseover", barTip.show)
-			.on("mouseout", barTip.hide);
+			.attr("height", funcForH) //error here
+        console.log("checkpoint6")
+			//.on("click", clickFeature)
+			//.on("mouseover", barTip.show)
+			//.on("mouseout", barTip.hide);
+            
 	}
-	  
-	  
-    function dataPreprocess(data) {
+    function clickFeature(d, i) {
+        //todo
+        console.log('clickFeature');
+    }
+      
+	  	  
+    function dataPreprocess(dataPre) {
 		rst = {};
-		for(i = 0; i < data.length; ++i) {
-			for(var k in data[i]) {
+		for(i = 0; i < dataPre.length; ++i) {
+			for(var k in dataPre[i]) {
 				if(k) {
-					numStr = data[i][k].replace(/[,$ ]/g, '');
-					data[i][k] = parseFloat(numStr);
+					numStr = dataPre[i][k].replace(/[,$ ]/g, '');
+					dataPre[i][k] = parseFloat(numStr);
 				} 
 			}
 		}
-		return data;
+		return dataPre;
 	}
       
         
@@ -206,7 +302,12 @@
       click: function(event, data) {
 		currState = data.name;
         $('#clicked-state').text('You clicked: '+currState+' AND '+currGroup);
-		showBarChart();
+        if (!(chartData===null)){
+            showBarChart(chartData);
+        }
+        else{
+            console.log("null chartData")
+        }
 
       }
     });
