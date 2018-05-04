@@ -142,7 +142,6 @@
 </style>
 
 <div class="navbar">
-    <a href="#" onclick="cluster()"> Show Cluster </a>
     <div class="dropdown">
         <button class="dropbtn" onclick="dropDown()"> Features
             <i class="fa fa-caret-down"></i>
@@ -168,9 +167,7 @@
 <script>
 // variables
 var mapData = null,
-    chartData = null,
-    clusterData = null;
-    showCluster = false;
+    chartData = null
 
 var currFeature = 0;
 var currState = "01";
@@ -296,7 +293,6 @@ function stateMapColor(d) {
 d3.queue()
     .defer(d3.json, "https://d3js.org/us-10m.v1.json")
     .defer(d3.csv, "http://aaell.me/resources/all_data.csv")
-    .defer(d3.csv, "http://aaell.me/resources/id_label.csv")
     .await(dataReady);
 
 // callbacks
@@ -307,11 +303,10 @@ function mouseOver(d, i) {
     showPieChart();
 }
 
-function dataReady(error, us, data, cluster) {
+function dataReady(error, us, data) {
     if (error) throw error;
     mapData = us;
     chartData = dataPreprocess(data);
-    clusterData = cluster[0];
     showMap();
 }
 
@@ -330,25 +325,13 @@ function showMap() {
     mapSvg.selectAll("g").remove();
     mapSvg.selectAll("path").remove();
     mapColor = null;
-    if(showCluster) {
-        scale = d3.scaleLinear()
-                    .domain([0, rowMax(chartData[currFeature])])
-                    .range([0, 0.7]);
-        
-        color = d3.scaleOrdinal(d3.schemeCategory20c);
-        mapColor = (d) => {
-            c = d3.rgb(color(clusterData[d.id]));
-            c.opacity = 0.3 + scale(chartData[currFeature][d.id]);
-            return c;
-        }; 
-    } else {
-        color = d3.scaleLinear()
-                    .domain([0, rowMax(chartData[currFeature])])
-                    .range(['#c6dbef', '#08306b']);
-        mapColor = (d) => { 
-            return color(chartData[currFeature][d.id])
-        };
-    }
+
+    color = d3.scaleLinear()
+                .domain([0, rowMax(chartData[currFeature])])
+                .range(['#c6dbef', '#08306b']);
+    mapColor = (d) => { 
+        return color(chartData[currFeature][d.id])
+    };
 
     mapSvg.append("g")
             .attr("class", "state-inner")
@@ -488,10 +471,6 @@ function dropDown() {
     }
 }
 
-function cluster() {
-    showCluster = !showCluster;
-    showMap()
-}
 
 function clickFeatureGroup(d, i) {
     dropDownEle = d3.select("#selectFeature");
