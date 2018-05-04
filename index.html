@@ -251,15 +251,15 @@ function getGroup(data, group, changeFeature = false) {
 }
 
 // util functions 
-function rowMax(data) {
-    m = -Infinity;
+function rowSum(data) {
+    s = 0;
     for(var k in data) {
         if(k) {
             v = data[k];
-            if(m < v) m = v;
+            s = s+v/5;
         }
     }
-    return m;
+    return s;
 }
 
 function columnMax(group, state) {
@@ -322,13 +322,14 @@ function clickPie(d, i) {
 }
 
 function showMap() {
+    console.log("Test");
     mapSvg.selectAll("g").remove();
     mapSvg.selectAll("path").remove();
     mapColor = null;
 
     color = d3.scaleLinear()
-                .domain([0, rowMax(chartData[currFeature])])
-                .range(['#c6dbef', '#08306b']);
+                .domain([0, rowSum(chartData[currFeature])])
+                .range(['#c6dbef', '#2d0894']);
     mapColor = (d) => { 
         return color(chartData[currFeature][d.id])
     };
