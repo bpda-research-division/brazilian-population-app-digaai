@@ -10,61 +10,94 @@
     <title>Jumbotron Template for Bootstrap</title>
 
     <!-- Bootstrap core CSS -->
+	<link href="css/style1.css" rel="stylesheet">
+
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="css/jumbotron.css" rel="stylesheet">
-	<link href="css/style1.css" rel="stylesheet">
 
   </head>
 
   <body>
+  <div id= "chart">  </div>
 
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="#">Navbar</a>
+      <a class="navbar-brand" href="#">Visualizing the Brazilian Diaspora</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-        <ul class="navbar-nav mr-auto">
+        <ul class="nav navbar-nav mr-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="#">Digaii Mainpage <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
+            <a class="nav-link" href="#">Book Link</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#">Disabled</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown01">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-          </li>
-        </ul>
+          
+		  <li class="dropdown">
+			<a class="dropdown-toggle nav-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+
+			<ul class="dropdown-menu">
+			  <li><a onclick='setFeature("population")'>Population</a></li>
+			  <li><a onclick='setFeature("age detail")'>Ages</a></li>
+			  <li><a onclick='setFeature("age summary")'>Ages Grouped</a></li>
+			  <li><a onclick='setFeature("gender")'>Gender</a></li>
+			  <li><a onclick='setFeature("marriage")'>Marital Status</a></li>
+			  <li><a onclick='setFeature("citizen")'>Citizen Status</a></li>
+			  <li><a onclick='setFeature("enter time")'>Entry Time</a></li>
+			  <li><a onclick='setFeature("education")'>Education</a></li>
+			  <li><a onclick='setFeature("civilian labor force")'>Civilian Labor Force</a></li>
+			  <li><a onclick='setFeature("unemployed")'>Employment Status</a></li>
+			  <li><a onclick='setFeature("employment type")'>Employment Type</a></li>
+			  <li><a onclick='setFeature("employment by industry")'>Employment by Industry</a></li>
+			  <li><a onclick='setFeature("employment by occupation")'>Employment by Occupation</a></li>
+			  <li><a onclick='setFeature("income")'>Yearly Income</a></li>
+			</ul>
+		  </li>
+		</ul>
       </div>
     </nav>
 
     <main role="main">
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+      <div class="jumbotron">
+        <div class="container">
+          <h1 class="display-3">Digaii : Visualizing the Brazilian Diaspora!</h1>
+          <p>This is where the explanation of the website goes. Use it as a starting point to create something more unique.</p>
+          <p><a class="btn btn-primary btn-lg" href="#" role="button">Another Link &raquo;</a></p>
+        </div>
+      </div>
+
+
 
       <!-- Main jumbotron for a primary marketing message or call to action -->
 
       <div class="jumbotron">
         <div class="container">
-		  <svg id="map" width="960" height="600"></svg>
+		<a> Here is another free space for an explination </a>
         </div>
       </div>
 
-      <div class="container">
+      <div class="container-fluid">
+	    <div class="row">
+          <div class="col-md-4">
+			<span class="pull-left">
+				<div class="chart">
+					<svg id="bar" width="480" height = "300"></svg>
+					<svg id="pie" width="480" height = "350"></svg>
+				</div>
+			<span class="pull-left">
 
-		<div class="chart">
-			<svg id="bar" width="480" height = "300"></svg>
-			<svg id="pie" width="480" height = "350"></svg>
-		</div>
+          </div>
+		  <div class="col-md-4">
+			<svg id="map" viewBox="0 0 960 600"></svg>
+          </div>
+        </div>
+
+
 
       </div> <!-- /container -->
 
@@ -84,9 +117,9 @@
 	
 	<!-- For the map -->
 	<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="https://d3js.org/topojson.v2.min.js"></script>
-<script src="js/d3-tip.js"></script>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script src="https://d3js.org/topojson.v2.min.js"></script>
+	<script src="js/d3-tip.js"></script>
 
 <script>
 // variables
@@ -97,10 +130,12 @@ var currFeature = 0;
 var currState = "01";
 var currGroup = "age detail";
 
-var mapSvg = d3.select("#map").append("svg").attr("width", "100%").append("g"),
+var width = parseInt(document.body.clientWidth*3/5);
+var height = parseInt(document.body.clientWidth*3/5*.625);
+
+var mapSvg = d3.select("#map").attr("width", width).attr("height", height),
     mapPath = d3.geoPath(),
     mapColor = null;
-	
 var barSvg = d3.select("#bar"),
     barMargin = {top: 20, right: 50, bottom: 100, left: 100},
     barWidth = +barSvg.attr("width") - barMargin.left - barMargin.right,
@@ -112,9 +147,6 @@ var pieSvg = d3.select("#pie"),
     pieHeight = +pieSvg.attr("height") - pieMargin.top - pieMargin.bottom,
     pieRadius = Math.min(pieWidth, pieHeight) / 2;
 
-var groups = ["population", "age detail", "age summary", "gender", "marriage", "citizen", 
-              "enter time", "education", "civilian labor force", "unemployed", "employment type",
-              "employment by industry", "employment by occupation", "income" ];
 
 var mapTip = d3.tip()
                 .attr("class", "tip")
@@ -135,8 +167,23 @@ mapSvg.call(mapTip);
 barSvg.call(barTip);
 pieSvg.call(pieTip);
 
-d3.select(window)
-    		.on("resize", sizeChange);
+
+
+function redraw( ){
+
+	// Extract the width and height that was computed by CSS.
+	var width = parseInt(document.body.clientWidth*3/5);
+	var height = parseInt(document.body.clientWidth*3/5*.625);
+
+	// Use the extracted size to set the size of an SVG element.
+	mapSvg.attr("width", width).attr("height", height);
+}
+
+redraw();
+
+window.addEventListener("resize", redraw);
+
+
 
 function getGroup(data, group, changeFeature = false) {
     start = 0;
@@ -280,8 +327,6 @@ function showBarChart() {
     // clean last output
     barSvg.select("g").remove();
 
-    if(currGroup === "population") return;
-
     data = getGroup(chartData, currGroup);
 
     x = d3.scaleBand().rangeRound([0, barWidth]).padding(0.1),
@@ -329,8 +374,6 @@ function showPieChart() {
     // clean last output
     pieSvg.selectAll("g").remove();
     
-    if(currGroup === "population") return;
-
     data = getGroup(chartData, currGroup);
 
     g = pieSvg.append("g").attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")"),
@@ -383,28 +426,8 @@ function showPieChart() {
 }
 
 //UI function
-function dropDown() {
-    dropDownEle = d3.select("#selectFeature");
-    if(dropDownEle.classed("show")) {
-        dropDownEle.classed("show", false);
-    } else {
-        dropDownEle.classed("show", true);
-        dropDownEle.selectAll("a")
-                    .data(groups)
-                    .enter().append("a")
-                    .text(d => d)
-                    .attr("href", "#")
-                    .on("click", clickFeatureGroup);
-    }
-}
 
-function sizeChange() {
-	    d3.select("g").attr("transform", "scale(" + $("#container").width()/900 + ")");
-	    $("svg").height($("#container").width()*0.618);
-	}
-
-
-function clickFeatureGroup(d, i) {
+function setFeature(d) {
     dropDownEle = d3.select("#selectFeature");
     dropDownEle.classed("show", false);
     currGroup = d;
