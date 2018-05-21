@@ -1,166 +1,90 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-.window {
-    padding-top: 100px;
-    display: flex;
-    flex-direction: row;
-}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!--<link rel="icon" href="../../../../favicon.ico"> -->
 
-.chart {
-    display: flex;
-    flex-direction: column;
-}
+    <title>Jumbotron Template for Bootstrap</title>
 
-.state-inner {
-  fill: none;
-}
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 
-.state-inner path:hover {
-    fill: orange;
-}
+    <!-- Custom styles for this template -->
+    <link href="css/jumbotron.css" rel="stylesheet">
+	<link href="css/style1.css" rel="stylesheet">
 
-.states {
-  fill: none;
-  stroke: #fff;
-  stroke-linejoin: round;
-}
+  </head>
 
-.bar {
-  fill: steelblue;
-}
+  <body>
 
-.bar:hover {
-  fill: brown;
-  cursor: pointer;
-}
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-.arc path {
-  stroke: #fff;
-}
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#">Disabled</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="#">Action</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
 
-.arc path:hover {
-  fill: brown;
-  cursor: pointer;
-}
+    <main role="main">
 
-.pie-axis line,
-.pie-axis path {
-    display: none;
-}
-/* d3-tip styles*/
-.tip {
-    line-height: 1;
-    padding: 6px;
-    background: rgba(0, 0, 0, 0.8);
-    color: #fff;
-    border-radius: 4px;
-    font-size: 12px;
-}
+      <!-- Main jumbotron for a primary marketing message or call to action -->
 
-/* Creates a small triangle extender for the tooltip */
-.tip:after {
-    box-sizing: border-box;
-    display: inline;
-    font-size: 10px;
-    width: 100%;
-    line-height: 1;
-    color: rgba(0, 0, 0, 0.8);
-    content: "\25BC";
-    position: absolute;
-    text-align: center;
-}
-
-/* Style northward tooltips specifically */
-.tip.n:after {
-    margin: -2px 0 0 0;
-    top: 100%;
-    left: 0;
-}
-
-/* Navigation Bar */
-.navbar {
-    overflow: hidden;
-    background-color: #333;
-    font-family: Arial;
-}
-
-.navbar a {
-    float: left;
-    font-size: 16px;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-}
-
-.dropdown {
-    float: left;
-    overflow: hidden;
-}
-
-.dropdown .dropbtn {
-    cursor: pointer;
-    font-size: 16px;    
-    border: none;
-    outline: none;
-    color: white;
-    padding: 14px 16px;
-    background-color: inherit;
-}
-
-.navbar a:hover, .dropdown:hover .dropbtn {
-    background-color: red;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.dropdown-content a {
-    float: none;
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-    text-align: left;
-}
-
-.dropdown-content a:hover {
-    background-color: #ddd;
-}
-
-.show {
-    display: block;
-}
-</style>
-
-<div class="navbar">
-    <div class="dropdown">
-        <button class="dropbtn" onclick="dropDown()"> Features
-            <i class="fa fa-caret-down"></i>
-        </button>
-        <div class="dropdown-content" id="selectFeature">
+      <div class="jumbotron">
+        <div class="container">
+		  <svg id="map" width="960" height="600"></svg>
         </div>
-    </div> 
-</div>
+      </div>
 
-<div class="window">
-    <svg id="map" width="960" height="600"></svg>
-    <div class="chart">
-        <svg id="bar" width="480" height = "300"></svg>
-        <svg id="pie" width="480" height = "350"></svg>
-    </div>
-</div>
+      <div class="container">
 
+		<div class="chart">
+			<svg id="bar" width="480" height = "300"></svg>
+			<svg id="pie" width="480" height = "350"></svg>
+		</div>
+
+      </div> <!-- /container -->
+
+    </main>
+
+    <footer class="container">
+      <p>&copy; Company 2017-2018</p>
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+	
+	<!-- For the map -->
+	<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://d3js.org/topojson.v2.min.js"></script>
 <script src="js/d3-tip.js"></script>
 
@@ -173,10 +97,10 @@ var currFeature = 0;
 var currState = "01";
 var currGroup = "age detail";
 
-var mapSvg = d3.select("#map"),
+var mapSvg = d3.select("#map").append("svg").attr("width", "100%").append("g"),
     mapPath = d3.geoPath(),
     mapColor = null;
-
+	
 var barSvg = d3.select("#bar"),
     barMargin = {top: 20, right: 50, bottom: 100, left: 100},
     barWidth = +barSvg.attr("width") - barMargin.left - barMargin.right,
@@ -210,6 +134,9 @@ var pieTip = d3.tip()
 mapSvg.call(mapTip);
 barSvg.call(barTip);
 pieSvg.call(pieTip);
+
+d3.select(window)
+    		.on("resize", sizeChange);
 
 function getGroup(data, group, changeFeature = false) {
     start = 0;
@@ -322,7 +249,6 @@ function clickPie(d, i) {
 }
 
 function showMap() {
-    console.log("Test");
     mapSvg.selectAll("g").remove();
     mapSvg.selectAll("path").remove();
     mapColor = null;
@@ -472,6 +398,11 @@ function dropDown() {
     }
 }
 
+function sizeChange() {
+	    d3.select("g").attr("transform", "scale(" + $("#container").width()/900 + ")");
+	    $("svg").height($("#container").width()*0.618);
+	}
+
 
 function clickFeatureGroup(d, i) {
     dropDownEle = d3.select("#selectFeature");
@@ -483,3 +414,6 @@ function clickFeatureGroup(d, i) {
     showPieChart();
 }
 </script>
+
+  </body>
+</html>

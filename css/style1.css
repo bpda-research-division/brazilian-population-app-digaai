@@ -13,6 +13,10 @@
   fill: none;
 }
 
+#map {
+	margin:2%;
+}
+
 .state-inner path:hover {
     fill: orange;
 }
