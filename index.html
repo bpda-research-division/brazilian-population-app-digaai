@@ -262,7 +262,7 @@
         for(i = 0; i < data.length; ++i) {
             for(var k in data[i]) {
                 if(k) {
-                    numStr = data[i][k].replace(/[,$ ]/g, '');
+                    numStr = data[i][k].replace(/[,]/g, '');
                     data[i][k] = parseFloat(numStr);
                 } 
             }
