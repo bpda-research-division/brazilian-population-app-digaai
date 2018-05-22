@@ -224,14 +224,14 @@
                 break;
             case "employment by occupation": start = 52; end = 60;
                 break;
-            case "income": start = 60; end = 63;
+            case "income": start = 60; end = 62;
 				break;
-			case "business": start = 63; end = 65;
+			case "business": start = 62; end = 64;
 				break;
         }
         if(changeFeature)
             currFeature = d3.min([d3.max([start, currFeature]), end - 1]);
-
+		console.log(data.slice(start,end));
         return data.slice(start, end);
     }
 
@@ -264,8 +264,10 @@
                 if(k) {
                     numStr = data[i][k].replace(/[,]/g, '');
                     data[i][k] = parseFloat(numStr);
-                } 
+                } 				
             }
+			console.log(data)[i];
+			
         }
         return data;
     }
@@ -293,6 +295,7 @@
         if (error) throw error;
         mapData = us;
         chartData = dataPreprocess(data);
+		console.log(chartData);
         showMap();
     }
 
