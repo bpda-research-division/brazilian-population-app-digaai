@@ -30,36 +30,36 @@
         <ul class="nav navbar-nav mr-auto">
 
          <!-- each nav-item is an item in the navbar -->
-  		  <!-- Link to Digaii -->
-		  <li class="nav-item active">
+            <!-- Link to Digaii -->
+          <li class="nav-item active">
             <a class="nav-link" href="http://www.digaai.com/">Digaai Mainpage <span class="sr-only">(current)</span></a>
           </li>
 
-  		  <!-- Jumps to the book section -->		  
+            <!-- Jumps to the book section -->          
           <li class="nav-item">
             <a class="nav-link" href="#bookPos">Brasileiros nos Estados Unidos _ Meio Século (Re)fazendo a América</a>
           </li>
 
-  		  <!-- Dropdown menu for feature selection -->		            
+            <!-- Dropdown menu for feature selection -->                    
           <li class="dropdown">
             <a class="dropdown-toggle nav-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
 
             <ul class="dropdown-menu">
-              <li><a href="#mapPosition" onclick='setFeature("population")'>Population</a></li>
-              <li><a href="#mapPosition" onclick='setFeature("age detail")'>Ages</a></li>
-              <li><a href="#mapPosition" onclick='setFeature("age summary")'>Ages Grouped</a></li>
-              <li><a href="#mapPosition" onclick='setFeature("gender")'>Gender</a></li>
-              <li><a href="#mapPosition" onclick='setFeature("marriage")'>Marital Status</a></li>
-              <li><a href="#mapPosition" onclick='setFeature("citizen")'>Citizen Status</a></li>
-              <li><a href="#mapPosition" onclick='setFeature("enter time")'>Entry Time</a></li>
-              <li><a href="#mapPosition" onclick='setFeature("education")'>Education</a></li>
-              <li><a href="#mapPosition" onclick='setFeature("civilian labor force")'>Civilian Labor Force</a></li>
-              <li><a href="#mapPosition" onclick='setFeature("unemployed")'>Employment Status</a></li>
-              <li><a href="#mapPosition" onclick='setFeature("employment type")'>Employment Type</a></li>
-              <li><a href="#mapPosition" onclick='setFeature("employment by industry")'>Employment by Industry</a></li>
-              <li><a href="#mapPosition" onclick='setFeature("employment by occupation")'>Employment by Occupation</a></li>
-              <li><a href="#mapPosition" onclick='setFeature("income")'>Yearly Income</a></li>
-			  <li><a href="#mapPosition" onclick='setFeature("business")'>Business Owners</a></li>
+              <li><a  onclick='setFeature("population")'>Population</a></li>
+              <li><a  onclick='setFeature("age detail")'>Ages</a></li>
+              <li><a  onclick='setFeature("age summary")'>Ages Grouped</a></li>
+              <li><a  onclick='setFeature("gender")'>Gender</a></li>
+              <li><a  onclick='setFeature("marriage")'>Marital Status</a></li>
+              <li><a  onclick='setFeature("citizen")'>Citizen Status</a></li>
+              <li><a  onclick='setFeature("enter time")'>Entry Time</a></li>
+              <li><a  onclick='setFeature("education")'>Education</a></li>
+              <li><a  onclick='setFeature("civilian labor force")'>Civilian Labor Force</a></li>
+              <li><a  onclick='setFeature("unemployed")'>Employment Status</a></li>
+              <li><a  onclick='setFeature("employment type")'>Employment Type</a></li>
+              <li><a  onclick='setFeature("employment by industry")'>Employment by Industry</a></li>
+              <li><a  onclick='setFeature("employment by occupation")'>Employment by Occupation</a></li>
+              <li><a  onclick='setFeature("income")'>Yearly Income</a></li>
+              <li><a  onclick='setFeature("business")'>Business Owners</a></li>
             </ul>
           </li>
         </ul>
@@ -74,18 +74,16 @@
           <p>This is where the explanation of the website goes. Use it as a starting point to create something more unique.</p>
           <p><a class="btn btn-primary btn-lg" href="#" role="button">Another Link &raquo;</a></p>
         </div>
-        
-          <div id="mapPosition"></div>
-    
+            
       </div>
 
 
 
-      <!-- Main jumbotron for a primary marketing message or call to action -->
-
+      <!-- Main container for map and graphs -->
         <div class="container-fluid">
           <div class="row">
-            <div class="col-md-4">
+			<!-- sub container for graph -->
+			<div class="col-md-4">
               <span class="pull-left">
                 <div class="chart">
                   <svg id="bar" width="480" height = "300"></svg>
@@ -93,44 +91,51 @@
                 </div>
               <span class="pull-left">
 
-              </div>
-              <div class="col-md-4">
-              <svg id="map" viewBox="0 0 960 600"></svg>
+            </div>
+			<!-- sub container for map -->
+			<div class="col-md-4">
+              <span class="pull-right">
+                <svg id="map" viewBox="0 0 960 600"></svg>
+              </span>
             </div>
           </div>
-        </div> <!-- /container -->
-      
+        </div>
+		
+     <!-- /container for book and such -->  
     <div id="bookPos">
-        <div class="jumbotron">
-            <div class="container">
-                <a> Here is another free space for the book </a>
-            </div>
-          </div>
+      <div class="jumbotron">
+        <div class="container">
+          <a> Here is another free space for the book </a>
+        </div>
+      </div>
     </div>
 
       
     </main>
 
     <footer class="container">
-      <p>&copy; Company 2017-2018</p>
+      <p>&copy; Digaai 2017-2018</p>
     </footer>
 
-    <!-- Bootstrap core JavaScript
+    <!-- JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+
+	<!-- various javascript libraries needed for webpage -->
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script>window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     
-    <!-- For the map -->
+    <!-- For the map and graph -->
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://d3js.org/topojson.v2.min.js"></script>
     <script src="js/d3-tip.js"></script>
 
     <script>
-    // variables
+    // define variables
     var mapData = null,
         chartData = null
 
@@ -141,6 +146,7 @@
     var width = parseInt(document.body.clientWidth*3/5);
     var height = parseInt(document.body.clientWidth*3/5*.625);
 
+    // define the map and graph svgs
     var mapSvg = d3.select("#map").attr("width", width).attr("height", height),
         mapPath = d3.geoPath(),
         mapColor = null;
@@ -155,7 +161,7 @@
         pieHeight = +pieSvg.attr("height") - pieMargin.top - pieMargin.bottom,
         pieRadius = Math.min(pieWidth, pieHeight) / 2;
 
-
+    // define the tooltips for map and graphs
     var mapTip = d3.tip()
                     .attr("class", "tip")
                     .offset([-8, 0])
@@ -166,34 +172,33 @@
                     .offset([-8, 0])
                     .html(d => d[""] + " : " + d[currState]);
 
-	var pieTip = d3.tip()
+	// it would be better for this to display a percentage rather than value
+    var pieTip = d3.tip()
                     .attr("class", "tip")
-                    .offset([-8, 0])
-                    .html(d => d.data[""] + " : " + d.data[currState]);
-
-	
+                    .offset([-8, 0]) 
+                    .html(d => d.data[""] + " : " + d.data[currState]); 
     mapSvg.call(mapTip);
     barSvg.call(barTip);
     pieSvg.call(pieTip);
 
 
-
+    // resizes the map to fit the screen    
     function redraw( ){
 
         // Extract the width and height that was computed by CSS.
         var width = parseInt(document.body.clientWidth*3/5);
-        var height = parseInt(document.body.clientWidth*3/5*.625);
+        var height = parseInt(document.body.clientWidth*3/5*.62);
 
         // Use the extracted size to set the size of an SVG element.
         mapSvg.attr("width", width).attr("height", height);
     }
-
+    // call redraw the first time
     redraw();
-
+    // call redraw after resize
     window.addEventListener("resize", redraw);
 
 
-
+    // get the correct rows from all data for these features
     function getGroup(data, group, changeFeature = false) {
         start = 0;
         end = 0;
@@ -225,17 +230,17 @@
             case "employment by occupation": start = 52; end = 60;
                 break;
             case "income": start = 60; end = 62;
-				break;
-			case "business": start = 62; end = 64;
-				break;
+                break;
+            case "business": start = 62; end = 64;
+                break;
         }
         if(changeFeature)
             currFeature = d3.min([d3.max([start, currFeature]), end - 1]);
-		console.log(data.slice(start,end));
+        console.log(data.slice(start,end));
         return data.slice(start, end);
     }
 
-    // util functions 
+    // util function
     function rowSum(data) {
         s = 0;
         for(var k in data) {
@@ -246,17 +251,8 @@
         }
         return s;
     }
-	
-
-    function columnMax(group, state) {
-        m = -Infinity;
-        for(i = 0; i < group.length; ++i) {
-            v = group[i][state];
-            if(m < v) m = v;
-        }
-        return m;
-    }
-
+    
+    // removes any extra ',' from the data and converts to float
     function dataPreprocess(data) {
         rst = {};
         for(i = 0; i < data.length; ++i) {
@@ -264,14 +260,13 @@
                 if(k) {
                     numStr = data[i][k].replace(/[,]/g, '');
                     data[i][k] = parseFloat(numStr);
-                } 				
+                }                 
             }
-			console.log(data)[i];
-			
         }
         return data;
     }
-
+    
+    // get state color as a percentage of the whole
     function stateMapColor(d) {
         c = chartData[currFeature][d.id]
         return mapColor(c);
@@ -283,7 +278,7 @@
         .defer(d3.csv, "http://aaell.me/resources/all_data.csv")
         .await(dataReady);
 
-    // callbacks
+    //reload maps and tip for state mouse-over
     function mouseOver(d, i) {
         mapTip.show(d, i);
         currState = d.id;
@@ -291,14 +286,16 @@
         showPieChart();
     }
 
+    // after data is loaded, load the map
     function dataReady(error, us, data) {
         if (error) throw error;
         mapData = us;
         chartData = dataPreprocess(data);
-		console.log(chartData);
+        console.log(chartData);
         showMap();
     }
 
+    // reload the map for this feature
     function clickFeature(d, i) {
         chartData.forEach((e, i) => {
             if(e[""] == d[""]) currFeature = i;
@@ -306,10 +303,12 @@
         showMap();
     }
 
+    // same as above
     function clickPie(d, i) {
         clickFeature(d.data, i);
     }
 
+    // load the map
     function showMap() {
         mapSvg.selectAll("g").remove();
         mapSvg.selectAll("path").remove();
@@ -338,6 +337,7 @@
                 .attr("d", mapPath);
     }
 
+    // load the bar chart
     function showBarChart() {
         // clean last output
         barSvg.select("g").remove();
@@ -385,12 +385,13 @@
             .on("mouseout", barTip.hide);
     }
 
+    // load the pie chart
     function showPieChart() {
         // clean last output
         pieSvg.selectAll("g").remove();
         
         data = getGroup(chartData, currGroup);
-		
+        
         g = pieSvg.append("g").attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")"),
         pieColor = d3.scaleOrdinal(d3.schemeCategory20c);
 
@@ -440,8 +441,8 @@
             .style("text-anchor", "start");
     }
 
-    //UI function
 
+    // update for feature click
     function setFeature(d) {
         dropDownEle = d3.select("#selectFeature");
         dropDownEle.classed("show", false);
