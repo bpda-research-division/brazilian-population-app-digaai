@@ -251,6 +251,15 @@
         }
         return s;
     }
+	
+	function columnMax(group, state) {
+        m = -Infinity;
+        for(i = 0; i < group.length; ++i) {
+            v = group[i][state];
+            if(m < v) m = v;
+        }
+        return m;
+    }
     
     // removes any extra ',' from the data and converts to float
     function dataPreprocess(data) {
