@@ -184,6 +184,8 @@
 
     // resizes the map to fit the screen    
     function redraw( ){
+        // document.body.clientWidth may not work in all browsers
+		// may cause an error. It works in Chrome and Edge for sure
 
         // Extract the width and height that was computed by CSS.
         var width = parseInt(document.body.clientWidth*3/5);
@@ -236,7 +238,6 @@
         }
         if(changeFeature)
             currFeature = d3.min([d3.max([start, currFeature]), end - 1]);
-        console.log(data.slice(start,end));
         return data.slice(start, end);
     }
 
