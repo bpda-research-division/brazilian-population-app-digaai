@@ -1,4 +1,4 @@
-# AaEll.github.io
+# Digaai Visualization Portal
 
 This is a joint project with Boston University Spark! and Digaai.
 
