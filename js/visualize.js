@@ -53,6 +53,8 @@
             return "Time of Entry to the United States"
         } else if(str == "unemployed") {
             return "Unemployment Statistics"
+        } else if(str == "business") {
+            return "Business Owners";
         }
         return str.replace(/\w\S*/g, function(txt){
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();

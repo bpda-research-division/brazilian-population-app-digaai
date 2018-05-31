@@ -2,6 +2,11 @@
   padding: 5px;
 }
 
+.dropdown-menu-option:hover {
+  background: #215184;
+  color: #fff;
+}
+
 .dropdown-menu-option {
   cursor: pointer;
 }
