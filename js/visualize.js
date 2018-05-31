@@ -1,3 +1,8 @@
+/*
+ * Filename: visualize.js
+ * Authors: Dharmesh Tarapore <dharmesh@cs.bu.edu> and Aaron Elliot
+ * Description: Visualizing ACS estimates.
+ */
  // define variables
     var mapData = null,
         chartData = null
