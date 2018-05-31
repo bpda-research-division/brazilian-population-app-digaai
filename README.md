@@ -17,7 +17,7 @@ Alabama Alaska Arizona Arkansas California Colorado Connecticut Delaware Distric
 Assuming you have PHP installed, run:
 <br/><code>./local</code> and PHP will spawn a local HTTP server on 127.0.0.1:3000 
 
-### Remote Execution
+### Remote Deploy
 This requires that you have access to the Digaai Heroku app. Contact <a href="mailto: dharmesh@cs.bu.edu">Dharmesh</a> with your Heroku username/email to request push access to the Heroku remote and then setup the Heroku remote to point to the app at https://digaai.herokuapp.com
 
 After, push changes to the Heroku remote.
