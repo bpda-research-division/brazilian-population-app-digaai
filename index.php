@@ -30,14 +30,14 @@
 
          <!-- each nav-item is an item in the navbar -->
             <!-- Link to Digaii -->
-          <li class="nav-item active">
+          <!--li class="nav-item active">
             <a class="nav-link" target="_blank" href="https://www.digaai.com/">Digaai Mainpage <span class="sr-only">(current)</span></a>
-          </li>
+          </li-->
 
             <!-- Jumps to the book section -->          
-          <li class="nav-item">
-            <a class="nav-link" href="#bookPos">Brasileiros nos Estados Unidos _ Meio Século (Re)fazendo a América</a>
-          </li>
+          <!--li class="nav-item">
+            <a class="nav-link" href="https://www.digaai.com/lancamento-livro-brasileiros-nos-estados-unidos/" target="_blank">Brasileiros nos Estados Unidos _ Meio Século (Re)fazendo a América</a>
+          </li-->
 
             <!-- Dropdown menu for feature selection -->                    
           <li class="dropdown">
@@ -104,13 +104,13 @@
         </div>
 		
      <!-- /container for book and such -->  
-    <div id="bookPos">
+    <!--div id="bookPos">
       <div class="jumbotron">
         <div class="container">
           <a> Here is another free space for the book </a>
         </div>
       </div>
-    </div>
+    </div-->
 
       
     </main>
