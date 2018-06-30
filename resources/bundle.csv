@@ -1,52 +1,59 @@
-"State","# of Brazilian Immigrants who are Business Owners","% of Brazilian Immigrants who are Business Owners", "No. of Brazilian Immigrants who are Business Owners", "# of Brazilian Immigrants who are Self-employed in own not incorporated business professional practice or farm", "% of Brazilian Immigrants who own not incorporated business professional practice or farm", "# of Brazilian Immigrants who are Self-employed in own incorporated business professional practice or farm", "% of Brazilian Immigrant Business Owners who own not incorporated Business professional practice or farm"
-Alabama/AL,'723', '107', '14.8%', '107', '92', '86.0%', '15', '14.0%'
-Alaska/AK,'120', '33', '27.5%', '33', '21', '63.6%', '12', '36.4%'
-Arizona/AZ,'1543', '158', '10.2%', '158', '49', '31.0%', '109', '69.0%'
-Arkansas/AR,'227', '-', '0.0%', '-','-','-','-','-'
-California/CA,'27239', '5789', '21.3%', '5789', '4425', '76.4%', '1364', '23.6%'
-Colorado/CO,'1670', '156', '9.3%', '156', '109', '69.9%', '47', '30.1%'
-Connecticut/CT,'12211', '4523', '37.0%', '4523', '3648', '80.7%', '875', '19.3%'
-Delaware/DE,'578', '53', '9.2%', '53', '18', '34.0%', '35', '66.0%'
-District of Columbia/DC,'1044', '162', '15.5%', '162', '162', '100.0%', '-', '0.0%'
-Florida/FL,'51388', '14103', '27.4%', '14103', '8235', '58.4%', '5868', '41.6%'
-Georgia/GA,'7447', '2641', '35.5%', '2641', '1983', '75.1%', '658', '24.9%'
-Hawaii/HI,'901', '191', '21.2%', '191', '95', '49.7%', '96', '50.3%'
-Idaho/ID,'248', '66', '26.6%', '66', '48', '72.7%', '18', '27.3%'
-Illinois/IL,'3822', '348', '9.1%', '348', '180', '51.7%', '168', '48.3%'
-Indiana/IN,'1511', '57', '3.8%', '57', '24', '42.1%', '33', '57.9%'
-Iowa/IA,'598', '13', '2.2%', '13', '13', '100.0%', '-', '0.0%'
-Kansas/KS,'575', '57', '9.9%', '57', '57', '100.0%', '-', '0.0%'
-Kentucky/KY,'318', '14', '4.4%', '14', '-', '0.0%', '14', '100.0%'
-Louisiana/LA,'1528', '387', '25.3%', '387', '219', '56.6%', '168', '43.4%'
-Maine/ME,'196', '71', '36.2%', '71', '71', '100.0%', '-', '0.0%'
-Maryland/MD,'6395', '1624', '25.4%', '1624', '1198', '73.8%', '426', '26.2%'
-Massachusetts/MA,'51986', '12284', '23.6%', '12284', '10478', '85.3%', '1806', '14.7%'
-Michigan/MI,'2718', '240', '8.8%', '240', '187', '77.9%', '53', '22.1%'
-Minnesota/MN,'1703', '227', '13.3%', '227', '191', '84.1%', '36', '15.9%'
-Mississippi/MS,'230', '37', '16.1%', '37', '30', '81.1%', '7', '18.9%'
-Missouri/MO,'1330', '59', '4.4%', '59', '43', '72.9%', '16', '27.1%'
-Montana/MT,'110', '39', '35.5%', '39', '39', '100.0%', '-', '0.0%'
-Nebraska/NE,'321', '-', '0.0%', '-','-','-','-','-'
-Nevada/NV,'1983', '372', '18.8%', '372', '296', '79.6%', '76', '20.4%'
-New Hampshire/NH,'1750', '267', '15.3%', '267', '224', '83.9%', '43', '16.1%'
-New Jersey/NJ,'22753', '5231', '23.0%', '5231', '4202', '80.3%', '1029', '19.7%'
-New Mexico/NM,'485', '-', '0.0%', '-','-','-','-','-'
-New York/NY,'19036', '5002', '26.3%', '5002', '3679', '73.6%', '1323', '26.4%'
-North Carolina/NC,'3232', '609', '18.8%', '609', '424', '69.6%', '185', '30.4%'
-North Dakota/ND,'324', '22', '6.8%', '22', '22', '100.0%', '-', '0.0%'
-Ohio/OH,'2420', '173', '7.1%', '173', '146', '84.4%', '27', '15.6%'
-Oklahoma/OK,'523', '25', '4.8%', '25', '25', '100.0%', '-', '0.0%'
-Oregon/OR,'1128', '206', '18.3%', '206', '206', '100.0%', '-', '0.0%'
-Pennsylvania/PA,'7367', '1657', '22.5%', '1657', '1527', '92.2%', '130', '7.8%'
-Rhode Island/RI,'1300', '304', '23.4%', '304', '241', '79.3%', '63', '20.7%'
-South Carolina/SC,'2271', '726', '32.0%', '726', '545', '75.1%', '181', '24.9%'
-South Dakota/SD,'47', '-', '0.0%', '-','-','-','-','-'
-Tennessee/TN,'817', '63', '7.7%', '63', '22', '34.9%', '41', '65.1%'
-Texas/TX,'10951', '1901', '17.4%', '1901', '1504', '79.1%', '397', '20.9%'
-Utah/UT,'2323', '285', '12.3%', '285', '246', '86.3%', '39', '13.7%'
-Vermont/VT,'191', '12', '6.3%', '12', '12', '100.0%', '-', '0.0%'
-Virginia/VA,'4472', '637', '14.2%', '637', '503', '79.0%', '134', '21.0%'
-Washington/WA,'2617', '446', '17.0%', '446', '419', '93.9%', '27', '6.1%'
-West Virginia/WV,'166', '2', '1.2%', '2', '2', '100.0%', '-', '0.0%'
-Wisconsin/WI,'670', '46', '6.9%', '46', '34', '73.9%', '12', '26.1%'
-Wyoming/WY,'39', '15', '38.5%', '15', '-', '0.0%', '15', '100.0%'
+State,# of Brazilian Immigrants,# of Brazilian Immigrants Business Owners,% of Brazilian Immigrants Business Owners,No. of Brazilian Immigrants Business Owners,"No. of Brazilian Immigrants who are Self-employed in own not
+incorporated business, professional practice, or farm","% of Brazilian Immigrant Business Owners
+who own not incorporated
+business, professional practice, or farm","No. of Brazilian Immigrants who are Self-employed
+in own incorporated business, professional
+practice, or farm","% of Brazilian Immigrant Business Owners
+who own not incorporated business, professional practice
+or farm"
+Alabama/AL,723,107,14.8%,107,92,86.0%,15,14.0%
+Alaska/AK,120,33,27.5%,33,21,63.6%,12,36.4%
+Arizona/AZ,1543,158,10.2%,158,49,31.0%,109,69.0%
+Arkansas/AR,227,0,0.0%,0,0,0,0,0
+California/CA,27239,5789,21.3%,5789,4425,76.4%,1364,23.6%
+Colorado/CO,1670,156,9.3%,156,109,69.9%,47,30.1%
+Connecticut/CT,12211,4523,37.0%,4523,3648,80.7%,875,19.3%
+Delaware/DE,578,53,9.2%,53,18,34.0%,35,66.0%
+District of Columbia/DC,1044,162,15.5%,162,162,100.0%,0,0.0%
+Florida/FL,51388,14103,27.4%,14103,8235,58.4%,5868,41.6%
+Georgia/GA,7447,2641,35.5%,2641,1983,75.1%,658,24.9%
+Hawaii/HI,901,191,21.2%,191,95,49.7%,96,50.3%
+Idaho/ID,248,66,26.6%,66,48,72.7%,18,27.3%
+Illinois/IL,3822,348,9.1%,348,180,51.7%,168,48.3%
+Indiana/IN,1511,57,3.8%,57,24,42.1%,33,57.9%
+Iowa/IA,598,13,2.2%,13,13,100.0%,0,0.0%
+Kansas/KS,575,57,9.9%,57,57,100.0%,0,0.0%
+Kentucky/KY,318,14,4.4%,14,0,0.0%,14,100.0%
+Louisiana/LA,1528,387,25.3%,387,219,56.6%,168,43.4%
+Maine/ME,196,71,36.2%,71,71,100.0%,0,0.0%
+Maryland/MD,6395,1624,25.4%,1624,1198,73.8%,426,26.2%
+Massachusetts/MA,51986,12284,23.6%,12284,10478,85.3%,1806,14.7%
+Michigan/MI,2718,240,8.8%,240,187,77.9%,53,22.1%
+Minnesota/MN,1703,227,13.3%,227,191,84.1%,36,15.9%
+Mississippi/MS,230,37,16.1%,37,30,81.1%,7,18.9%
+Missouri/MO,1330,59,4.4%,59,43,72.9%,16,27.1%
+Montana/MT,110,39,35.5%,39,39,100.0%,0,0.0%
+Nebraska/NE,321,0,0.0%,0,0,0,0,0
+Nevada/NV,1983,372,18.8%,372,296,79.6%,76,20.4%
+New Hampshire/NH,1750,267,15.3%,267,224,83.9%,43,16.1%
+New Jersey/NJ,22753,5231,23.0%,5231,4202,80.3%,1029,19.7%
+New Mexico/NM,485,0,0.0%,0,0,0,0,0
+New York/NY,19036,5002,26.3%,5002,3679,73.6%,1323,26.4%
+North Carolina/NC,3232,609,18.8%,609,424,69.6%,185,30.4%
+North Dakota/ND,324,22,6.8%,22,22,100.0%,0,0.0%
+Ohio/OH,2420,173,7.1%,173,146,84.4%,27,15.6%
+Oklahoma/OK,523,25,4.8%,25,25,100.0%,0,0.0%
+Oregon/OR,1128,206,18.3%,206,206,100.0%,0,0.0%
+Pennsylvania/PA,7367,1657,22.5%,1657,1527,92.2%,130,7.8%
+Rhode Island/RI,1300,304,23.4%,304,241,79.3%,63,20.7%
+South Carolina/SC,2271,726,32.0%,726,545,75.1%,181,24.9%
+South Dakota/SD,47,0,0.0%,0,0,0,0,0
+Tennessee/TN,817,63,7.7%,63,22,34.9%,41,65.1%
+Texas/TX,10951,1901,17.4%,1901,1504,79.1%,397,20.9%
+Utah/UT,2323,285,12.3%,285,246,86.3%,39,13.7%
+Vermont/VT,191,12,6.3%,12,12,100.0%,0,0.0%
+Virginia/VA,4472,637,14.2%,637,503,79.0%,134,21.0%
+Washington/WA,2617,446,17.0%,446,419,93.9%,27,6.1%
+West Virginia/WV,166,2,1.2%,2,2,100.0%,0,0.0%
+Wisconsin/WI,670,46,6.9%,46,34,73.9%,12,26.1%
+Wyoming/WY,39,15,38.5%,15,0,0.0%,15,100.0%
