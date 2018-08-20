@@ -66,39 +66,52 @@
     </nav>
 
     <main role="main">
-      <div class="title-banner">
-        <div class="header-title">
-          <h1>VISUALIZING THE <span>BRAZILIAN</span> DIASPORA</h1>
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+      <div class="jumbotron">
+        <div class="container">
+          <h1 class="display-3">Digaai : Visualizing the Brazilian Diaspora</h1>
+          <p>This is where the explanation of the website goes. Use it as a starting point to create something more unique.</p>
+          <p><a class="btn btn-primary btn-lg" href="#" role="button">Another Link &raquo;</a></p>
         </div>
       </div>
 
-      <div id="mapContainer" class="container-fluid map-container">
+
+
+      <!-- Main container for map and graphs -->
+        <div class="container-fluid">
+            <center>
+                <h2 id="displayedCategory">Currently Displaying: Population</h2>
+            </center>
           <div class="row">
-              <div class="col-12 col-md-6 order-md-2 map-graphic-container">
-                <svg id="map" viewBox="0 0 960 600"></svg>
-              </div>
-              <div class="col-12 col-md-6 map-control-container">
-                  <div class="map-control state-drop-down">
-                      <h3>STATE</h3>
-                  </div>
-                  <div class="map-control data-desc-info">
-                      <h3>NOW SHOWING</h3>
-                  </div>  
-              </div>
-          </div>
-      </div>
+			<!-- sub container for graph -->
+			<div class="col-md-4">
+              <span class="pull-left">
+                <div class="chart">
+                  <svg id="bar" width="480" height = "300"></svg>
+                  <svg id="pie" width="480" height = "350"></svg>
+                </div>
+              <span class="pull-left">
 
-      <div class="container-fluid data-container">
-        <div class="row">
-          <div class="col-12 order-md-2 bar-graph-container">
-            <svg id="bar" width="480" height = "300"></svg>
-          </div>
-          <div class="col-12 pie-graph-container">
-            <svg id="pie" width="480" height = "350"></svg>
+            </div>
+			<!-- sub container for map -->
+			<div class="col-md-4">
+              <span class="pull-right">
+                <svg id="map" viewBox="0 0 960 600"></svg>
+              </span>
+            </div>
           </div>
         </div>
+		
+     <!-- /container for book and such -->  
+    <!--div id="bookPos">
+      <div class="jumbotron">
+        <div class="container">
+          <a> Here is another free space for the book </a>
+        </div>
       </div>
+    </div-->
 
+      
     </main>
 
     <footer class="container">

@@ -11,8 +11,11 @@ var currFeature = 0;
 var currState = "01";
 var currGroup = "population";
 
-var width = parseInt(document.body.clientWidth*3/5);
-var height = parseInt(document.body.clientWidth*3/5*.625);
+// var width = parseInt(document.body.clientWidth*3/5);
+// var height = parseInt(document.body.clientWidth*3/5*.625);
+
+var width = parseInt(document.getElementById("mapContainer").style.width);
+var height = parseInt(document.getElementById("mapContainer").style.height);
 
 // Define map and graph svgs
 var mapSvg = d3.select("#map").attr("width", width).attr("height", height),
@@ -73,8 +76,11 @@ function redraw() {
 	// may cause an error. It works in Chrome and Edge for sure
 
     // Extract the width and height that was computed by CSS.
-    var width = parseInt(document.body.clientWidth*3/5);
-    var height = parseInt(document.body.clientWidth*3/5*.62);
+    // var width = parseInt(document.body.clientWidth*3/5);
+    // var height = parseInt(document.body.clientWidth*3/5*.62);
+
+    var width = parseInt(document.getElementById("mapContainer").style.width);
+    var height = parseInt(document.getElementById("mapContainer").style.height);
 
     // Use the extracted size to set the size of an SVG element.
     mapSvg.attr("width", width).attr("height", height);
