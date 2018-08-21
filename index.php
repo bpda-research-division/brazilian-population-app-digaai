@@ -12,7 +12,7 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="css/jumbotron.css" rel="stylesheet">
+    <!-- <link href="css/jumbotron.css" rel="stylesheet"> -->
     <!-- Custom styles for this project -->
     <link href="css/style1.css" rel="stylesheet">
   </head>
@@ -70,7 +70,22 @@
 
       <div class="container-fluid data-container">
         <div class="row">
-          <div class="col-12 order-md-2 bar-data-container">
+          <div class="col-12 pie-data-container">
+            <div class="state-header">
+              <h2 id="stateHeader">MASSACHUSETTS</h2>
+            </div>
+            <div class="pie-chart-container">
+              <svg id="pie" 
+                mobile-sm-width="280" 
+                mobile-sm-height="200"
+                mobile-md-width="400" 
+                mobile-md-height="400"
+                width="400" 
+                height="400">
+              </svg>
+            </div>
+          </div>
+          <div class="col-12 bar-data-container">
             <div class="data-description">
               <h3 id="barDataCategory">DATA CATEGORY</h3>
               <h1 id="barDataValue">DATA VALUE</h1>
@@ -85,10 +100,6 @@
                 height="400">
               </svg>
             </div>
-            
-          </div>
-          <div class="col-12 pie-data-container">
-            <svg id="pie" width="480" height="350"></svg>
           </div>
         </div>
       </div>

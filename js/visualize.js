@@ -4,11 +4,64 @@
  * Description: Visualizing ACS estimates.
  */
 
+const STATE_MAP = {
+    '01': 'ALABAMA',
+    '02': 'ALASKA',
+    '04': 'ARIZONA',
+    '05': 'ARKANSAS',
+    '06': 'CALIFORNIA',
+    '08': 'COLORADO',
+    '09': 'CONNECTICUT',
+    '10': 'DELAWARE',
+    '12': 'FLORIDA',
+    '13': 'GEORGIA',
+    '15': 'HAWAII',
+    '16': 'IDAHO',
+    '17': 'ILLINOIS',
+    '18': 'INDIANA',
+    '19': 'IOWA',
+    '20': 'KANSAS',
+    '21': 'KENTUCKY',
+    '22': 'LOUISIANA',
+    '23': 'MAINE',
+    '24': 'MARYLAND',
+    '25': 'MASSACHUSETTS',
+    '26': 'MICHIGAN',
+    '27': 'MINNESOTA',
+    '28': 'MISSISSIPPI',
+    '29': 'MISSOURI',
+    '30': 'MONTANA',
+    '31': 'NEBRASKA',
+    '32': 'NEVADA',
+    '33': 'NEW HAMPSHIRE',
+    '34': 'NEW JERSEY',
+    '35': 'NEW MEXICO',
+    '36': 'NEW YORK',
+    '37': 'NORTH CAROLINA',
+    '38': 'NORTH DAKOTA',
+    '39': 'OHIO',
+    '40': 'OKLAHOMA',
+    '41': 'OREGON',
+    '42': 'PENNSYLVANIA',
+    '44': 'RHODE ISLAND',
+    '45': 'SOUTH CAROLINA',
+    '46': 'SOUTH DAKOTA',
+    '47': 'TENNESSEE',
+    '48': 'TEXAS',
+    '49': 'UTAH',
+    '50': 'VERMONT',
+    '51': 'VIRGINIA',
+    '53': 'WASHINGTON',
+    '54': 'WEST VIRGINIA',
+    '55': 'WISCONSIN',
+    '56': 'WYOMING'
+};
+
 var mapData = null,
-    chartData = null
+    chartData = null;
 
 var currFeature = 0;
-var currState = "01";
+var currState = "25";
 var currGroup = "population";
 var currGroupName = "Population";
 
@@ -17,11 +70,7 @@ var mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%"),
     mapPath = d3.geoPath(),
     mapColor = null;
 var barSvg = d3.select("#bar");
-var pieSvg = d3.select("#pie"),
-    pieMargin = {top: 0, right: 0, bottom: 100, left: 0},
-    pieWidth = +pieSvg.attr("width") - pieMargin.left - pieMargin.right,
-    pieHeight = +pieSvg.attr("height") - pieMargin.top - pieMargin.bottom,
-    pieRadius = Math.min(pieWidth, pieHeight) / 2;
+var pieSvg = d3.select("#pie");
 
 // Define tooltips for map and graphs
 var mapTip = d3.tip()
@@ -79,6 +128,7 @@ function toDisplayCase(str) {
 // // Resizes the map to fit the screen    
 function redraw() {
     showBarChart(barSvg);
+    showPieChart(pieSvg);
 }
 window.addEventListener("resize", redraw);
 
@@ -152,6 +202,10 @@ function numberWithComma(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function mapToState(mapId) {
+    return STATE_MAP[mapId] || 'MASSACHUSETTS';
+};
+
 // Removes any extra ',' from the data and converts to float
 function dataPreprocess(data) {
     rst = {};
@@ -182,9 +236,9 @@ d3.queue()
 function mouseOver(d, i) {
     mapTip.show(d, i);
     currState = d.id;
-    document.getElementById("displayedState").innerHTML = d.id;
+    document.getElementById("displayedState").innerHTML = mapToState(d.id);
     showBarChart(barSvg);
-    showPieChart();
+    showPieChart(pieSvg);
 }
 
 // After data is loaded, load the map
@@ -192,7 +246,7 @@ function dataReady(error, us, data) {
     if (error) throw error;
     mapData = us;
     chartData = dataPreprocess(data);
-    document.getElementById("displayedState").innerHTML = currState;
+    document.getElementById("displayedState").innerHTML = mapToState(currState);
     setFeature(currGroup, currGroupName);
 }
 
@@ -205,7 +259,6 @@ function clickDataPoint(d, i) {
     //Set display values in Bar Chart section
     document.getElementById("barDataCategory").innerHTML = d[""].toUpperCase();
     document.getElementById("barDataValue").innerHTML = numberWithComma(parseInt(d[currState]));
-
     showMap();
 }
 
@@ -315,13 +368,34 @@ function showBarChart(barChart) {
 }
 
 // Load the pie chart
-function showPieChart() {
+function showPieChart(pieChart) {
+    let pieMargin, pieWidth, pieHeight, pieRadius;
+    let screenWidth = parseInt(document.body.clientWidth);
+
+    if (screenWidth < 768) {
+        pieMargin = { top: 0, right: 0, bottom: 100, left: 0 };
+        pieWidth = +pieChart.attr("mobile-sm-width");
+        pieHeight = +pieChart.attr("mobile-sm-height");
+    } else if (screenWidth < 992) {
+        pieMargin = { top: 0, right: 0, bottom: 100, left: 0 };
+        pieWidth = +pieChart.attr("mobile-md-width");
+        pieHeight = +pieChart.attr("mobile-md-height");
+    } else {
+        pieMargin = { top: 0, right: 0, bottom: 100, left: 0 };
+        pieWidth = +pieChart.attr("width");
+        pieHeight = +pieChart.attr("height");
+    }
+
+    pieWidth = pieWidth - pieMargin.left - pieMargin.right;
+    pieHeight = pieHeight - pieMargin.top - pieMargin.bottom;
+    pieRadius = Math.min(pieWidth, pieHeight) / 2;
+    
     // Clean last output
-    pieSvg.selectAll("g").remove();
+    pieChart.selectAll("g").remove();
     
     data = getGroup(chartData, currGroup);
     
-    g = pieSvg.append("g").attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")"),
+    g = pieChart.append("g").attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")"),
     pieColor = d3.scaleOrdinal(d3.schemeCategory20c);
 
     var tots = d3.sum(data, function(d) { 
@@ -380,6 +454,8 @@ function showPieChart() {
         .attr("x", 10 + barSize)
         .attr("transform", "rotate(90)")
         .style("text-anchor", "start");
+
+    document.getElementById("stateHeader").innerHTML = mapToState(currState);
 }
 
 // Update for feature click
@@ -390,5 +466,5 @@ function setFeature(currGroupVal, currGroupNameVal) {
     getGroup(chartData, currGroupVal, true);
     showMap();
     showBarChart(barSvg);
-    showPieChart();
+    showPieChart(pieSvg);
 }   
