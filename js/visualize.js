@@ -10,16 +10,13 @@ var mapData = null,
 var currFeature = 0;
 var currState = "01";
 var currGroup = "population";
+var currGroupName = "Population";
 
 // Define map and graph svgs
 var mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%"),
     mapPath = d3.geoPath(),
     mapColor = null;
-var barSvg = d3.select("#bar"),
-    barMargin = {top: 20, right: 50, bottom: 100, left: 100},
-    barWidth = +barSvg.attr("width") - barMargin.left - barMargin.right,
-    barHeight = +barSvg.attr("height") - barMargin.top - barMargin.bottom;
-
+var barSvg = d3.select("#bar");
 var pieSvg = d3.select("#pie"),
     pieMargin = {top: 0, right: 0, bottom: 100, left: 0},
     pieWidth = +pieSvg.attr("width") - pieMargin.left - pieMargin.right,
@@ -79,23 +76,11 @@ function toDisplayCase(str) {
     return str.toUpperCase();
 }
 
-
 // // Resizes the map to fit the screen    
-// function redraw() {
-//     // document.body.clientWidth may not work in all browsers
-// 	// may cause an error. It works in Chrome and Edge for sure
-
-//     // Extract the width and height that was computed by CSS.
-//     var width = parseInt(document.body.clientWidth*3/5);
-//     var height = parseInt(document.body.clientWidth*3/5*.62);
-
-//     // Use the extracted size to set the size of an SVG element.
-//     mapSvg.attr("width", width).attr("height", height);
-// }
-// // Call redraw the first time
-// redraw();
-// // Call redraw after resize
-// window.addEventListener("resize", redraw);
+function redraw() {
+    showBarChart(barSvg);
+}
+window.addEventListener("resize", redraw);
 
 
 // Get the correct rows from all data for these features
@@ -163,9 +148,12 @@ function columnMax(group, state) {
     return m;
 }
 
+function numberWithComma(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 // Removes any extra ',' from the data and converts to float
 function dataPreprocess(data) {
-    console.log(data);
     rst = {};
     for(i = 0; i < data.length; ++i) {
         for(var k in data[i]) {
@@ -195,7 +183,7 @@ function mouseOver(d, i) {
     mapTip.show(d, i);
     currState = d.id;
     document.getElementById("displayedState").innerHTML = d.id;
-    showBarChart();
+    showBarChart(barSvg);
     showPieChart();
 }
 
@@ -204,23 +192,26 @@ function dataReady(error, us, data) {
     if (error) throw error;
     mapData = us;
     chartData = dataPreprocess(data);
-    var defaultState = 25; 
-    currState = defaultState;
-    document.getElementById("displayedState").innerHTML = defaultState;
-    setFeature("age summary", "Ages Grouped");
+    document.getElementById("displayedState").innerHTML = currState;
+    setFeature(currGroup, currGroupName);
 }
 
 // Reload the map for this feature
-function clickFeature(d, i) {
+function clickDataPoint(d, i) {
     chartData.forEach((e, i) => {
         if(e[""] == d[""]) currFeature = i;
     });
+
+    //Set display values in Bar Chart section
+    document.getElementById("barDataCategory").innerHTML = d[""].toUpperCase();
+    document.getElementById("barDataValue").innerHTML = numberWithComma(parseInt(d[currState]));
+
     showMap();
 }
 
 // Same as above
 function clickPie(d, i) {
-    clickFeature(d.data, i);
+    clickDataPoint(d.data, i);
 }
 
 // Load the map
@@ -250,24 +241,40 @@ function showMap() {
             .datum(topojson.mesh(mapData, mapData.objects.states, (a, b) => a !== b))
             .attr("class", "states")
             .attr("d", mapPath);
-    
-    setFeature
 }
 
 // Load the bar chart
-function showBarChart() {
+function showBarChart(barChart) {
+    let barMargin, barWidth, barHeight;
+    let screenWidth = parseInt(document.body.clientWidth);
+
+    if (screenWidth < 768) {
+        barMargin = { top: 20, right: 50, bottom: 50, left: 100 };
+        barWidth = +barChart.attr("mobile-sm-width");
+        barHeight = +barChart.attr("mobile-sm-height");
+    } else if (screenWidth < 992) {
+        barMargin = { top: 20, right: 0, bottom: 150, left: 100 };
+        barWidth = +barChart.attr("mobile-md-width");
+        barHeight = +barChart.attr("mobile-md-height");
+    } else {
+        barMargin = { top: 20, right: 0, bottom: 150, left: 50 };
+        barWidth = +barChart.attr("width");
+        barHeight = +barChart.attr("height");
+    }
+
+    barWidth = barWidth - barMargin.left - barMargin.right;
+    barHeight = barHeight - barMargin.top - barMargin.bottom;
+
     // Clean last output
-    barSvg.select("g").remove();
+    barChart.select("g").remove();
 
-    data = getGroup(chartData, currGroup);
-
-    x = d3.scaleBand().rangeRound([0, barWidth]).padding(0.1),
-    y = d3.scaleLinear().rangeRound([barHeight, 0]);
-
+    let data = getGroup(chartData, currGroup);
+    let x = d3.scaleBand().rangeRound([0, barWidth]).padding(0.1);
+    let y = d3.scaleLinear().rangeRound([barHeight, 0]);
     x.domain(data.map(d => d[""]));
     y.domain([0, columnMax(data, currState)]);
 
-    let g = barSvg.append("g")
+    let g = barChart.append("g")
                     .attr("transform", "translate(" + barMargin.left + "," + barMargin.top + ")");
 
     g.append("g")
@@ -291,15 +298,20 @@ function showBarChart() {
 
     g.selectAll(".bar")
         .data(data)
-        .enter().append("rect")
+        .enter()
+        .append("rect")
         .attr("class", "bar")
         .attr("x", d => x(d[""]))
         .attr("y", d => y(d[currState]))
         .attr("width", x.bandwidth())
         .attr("height", d => barHeight - y(d[currState]))
-        .on("click", clickFeature)
+        .on("click", clickDataPoint)
         .on("mouseover", barTip.show)
         .on("mouseout", barTip.hide);
+
+    //Set display values in Bar Chart section
+    document.getElementById("barDataCategory").innerHTML = chartData[currFeature][""].toUpperCase();
+    document.getElementById("barDataValue").innerHTML = numberWithComma(parseInt(chartData[currFeature][currState]));
 }
 
 // Load the pie chart
@@ -371,16 +383,12 @@ function showPieChart() {
 }
 
 // Update for feature click
-function setFeature(currCategoryAlias, currCategoryName) {
-    var currCategory = document.getElementById("displayedCategory");
-    currCategory.innerHTML = toDisplayCase(currCategoryAlias);
-    var dropdownMenuButton = document.getElementById("dropdownMenuButton");
-    dropdownMenuButton.innerHTML = currCategoryName.toUpperCase();
-    // dropDownEle = d3.select("#selectFeature");
-    // dropDownEle.classed("show", false);
-    currGroup = currCategoryAlias;
-    getGroup(chartData, currCategoryAlias, true);
+function setFeature(currGroupVal, currGroupNameVal) {
+    document.getElementById("displayedCategory").innerHTML = toDisplayCase(currGroupVal);
+    document.getElementById("dropdownMenuButton").innerHTML = currGroupNameVal.toUpperCase();
+    currGroup = currGroupVal;
+    getGroup(chartData, currGroupVal, true);
     showMap();
-    showBarChart();
+    showBarChart(barSvg);
     showPieChart();
 }   

@@ -70,10 +70,24 @@
 
       <div class="container-fluid data-container">
         <div class="row">
-          <div class="col-12 order-md-2 bar-graph-container">
-            <svg id="bar" width="480" height="300"></svg>
+          <div class="col-12 order-md-2 bar-data-container">
+            <div class="data-description">
+              <h3 id="barDataCategory">DATA CATEGORY</h3>
+              <h1 id="barDataValue">DATA VALUE</h1>
+            </div>
+            <div id="barChartContainer" class="bar-chart-container">
+              <svg id="bar" 
+                mobile-sm-width="280" 
+                mobile-sm-height="200"
+                mobile-md-width="500" 
+                mobile-md-height="400"
+                width="500" 
+                height="400">
+              </svg>
+            </div>
+            
           </div>
-          <div class="col-12 pie-graph-container">
+          <div class="col-12 pie-data-container">
             <svg id="pie" width="480" height="350"></svg>
           </div>
         </div>
