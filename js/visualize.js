@@ -11,14 +11,8 @@ var currFeature = 0;
 var currState = "01";
 var currGroup = "population";
 
-// var width = parseInt(document.body.clientWidth*3/5);
-// var height = parseInt(document.body.clientWidth*3/5*.625);
-
-var width = parseInt(document.getElementById("mapContainer").style.width);
-var height = parseInt(document.getElementById("mapContainer").style.height);
-
 // Define map and graph svgs
-var mapSvg = d3.select("#map").attr("width", width).attr("height", height),
+var mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%"),
     mapPath = d3.geoPath(),
     mapColor = null;
 var barSvg = d3.select("#bar"),
@@ -69,26 +63,39 @@ function toTitleCase(str) {
     });
 }
 
+function toDisplayCase(str) {
+    if(str == "citizen") {
+        return "CITIZEN STATUS";
+    } else if(str == "marriage") {
+        return "MARITAL STATUS";
+    } else if(str == "enter time") {
+        return "TIME OF ENTRY TO THE UNITED STATES"
+    } else if(str == "unemployed") {
+        return "UNEMPLOYMENT STATISTICS"
+    } else if(str == "business") {
+        return "BUSINESS OWNERS";
+    }
 
-// Resizes the map to fit the screen    
-function redraw() {
-    // document.body.clientWidth may not work in all browsers
-	// may cause an error. It works in Chrome and Edge for sure
-
-    // Extract the width and height that was computed by CSS.
-    // var width = parseInt(document.body.clientWidth*3/5);
-    // var height = parseInt(document.body.clientWidth*3/5*.62);
-
-    var width = parseInt(document.getElementById("mapContainer").style.width);
-    var height = parseInt(document.getElementById("mapContainer").style.height);
-
-    // Use the extracted size to set the size of an SVG element.
-    mapSvg.attr("width", width).attr("height", height);
+    return str.toUpperCase();
 }
-// Call redraw the first time
-redraw();
-// Call redraw after resize
-window.addEventListener("resize", redraw);
+
+
+// // Resizes the map to fit the screen    
+// function redraw() {
+//     // document.body.clientWidth may not work in all browsers
+// 	// may cause an error. It works in Chrome and Edge for sure
+
+//     // Extract the width and height that was computed by CSS.
+//     var width = parseInt(document.body.clientWidth*3/5);
+//     var height = parseInt(document.body.clientWidth*3/5*.62);
+
+//     // Use the extracted size to set the size of an SVG element.
+//     mapSvg.attr("width", width).attr("height", height);
+// }
+// // Call redraw the first time
+// redraw();
+// // Call redraw after resize
+// window.addEventListener("resize", redraw);
 
 
 // Get the correct rows from all data for these features
@@ -158,6 +165,7 @@ function columnMax(group, state) {
 
 // Removes any extra ',' from the data and converts to float
 function dataPreprocess(data) {
+    console.log(data);
     rst = {};
     for(i = 0; i < data.length; ++i) {
         for(var k in data[i]) {
@@ -186,6 +194,7 @@ d3.queue()
 function mouseOver(d, i) {
     mapTip.show(d, i);
     currState = d.id;
+    document.getElementById("displayedState").innerHTML = d.id;
     showBarChart();
     showPieChart();
 }
@@ -195,7 +204,10 @@ function dataReady(error, us, data) {
     if (error) throw error;
     mapData = us;
     chartData = dataPreprocess(data);
-    showMap();
+    var defaultState = 25; 
+    currState = defaultState;
+    document.getElementById("displayedState").innerHTML = defaultState;
+    setFeature("age summary", "Ages Grouped");
 }
 
 // Reload the map for this feature
@@ -238,6 +250,8 @@ function showMap() {
             .datum(topojson.mesh(mapData, mapData.objects.states, (a, b) => a !== b))
             .attr("class", "states")
             .attr("d", mapPath);
+    
+    setFeature
 }
 
 // Load the bar chart
@@ -356,15 +370,16 @@ function showPieChart() {
         .style("text-anchor", "start");
 }
 
-
 // Update for feature click
-function setFeature(d) {
+function setFeature(currCategoryAlias, currCategoryName) {
     var currCategory = document.getElementById("displayedCategory");
-    currCategory.innerHTML = "Currently Displaying: " + toTitleCase(d);
-    dropDownEle = d3.select("#selectFeature");
-    dropDownEle.classed("show", false);
-    currGroup = d;
-    getGroup(chartData, d, true);
+    currCategory.innerHTML = toDisplayCase(currCategoryAlias);
+    var dropdownMenuButton = document.getElementById("dropdownMenuButton");
+    dropdownMenuButton.innerHTML = currCategoryName.toUpperCase();
+    // dropDownEle = d3.select("#selectFeature");
+    // dropDownEle.classed("show", false);
+    currGroup = currCategoryAlias;
+    getGroup(chartData, currCategoryAlias, true);
     showMap();
     showBarChart();
     showPieChart();
