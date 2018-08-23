@@ -122,7 +122,6 @@
     <script src="https://d3js.org/topojson.v2.min.js"></script>
     <script src="js/d3-tip.js"></script>
 
-    <script type="text/javascript" src="js/utility.js"></script>
     <script type="text/javascript" src="js/visualize.js"></script>
 
   </body>

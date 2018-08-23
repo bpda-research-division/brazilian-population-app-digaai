@@ -57,8 +57,10 @@ const STATE_MAP_KEYS = {
     '56': 'WYOMING'
 };
 
-let mapData = null,
-    chartData = null;
+//#region Initialize Data
+
+let mapData = null;
+let chartData = null;
 
 let currFeature = 0;
 let lockedState = "25";
@@ -66,14 +68,12 @@ let currState = "25";
 let currGroup = "population";
 let currGroupName = "Population";
 
-// Define map and graph svgs
-let mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%"),
-    mapPath = d3.geoPath(),
-    mapColor = null;
+// Define map and graph svgs with tooltips
+let mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%");
+let mapSvgPath = d3.geoPath();
 let barSvg = d3.select("#bar");
 let pieSvg = d3.select("#pie");
 
-// Define tooltips for map and graphs
 let mapTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0])
@@ -99,189 +99,15 @@ d3.queue()
     .defer(d3.csv, "resources/all_data.csv")
     .await(dataReady);
 
-// Add resize listener to redraw data charts  
-function redrawData() {
-    document.getElementById("displayedState").innerHTML = mapToState(currState);
-    showBarChart(barSvg);
-    showPieChart(pieSvg);
-}
-window.addEventListener("resize", redrawData);
+//#endregion
 
-function toTitleCase(str) {
-    if(str == "citizen") {
-        return "Citizenship Status";
-    } else if(str == "marriage") {
-        return "Marital Status";
-    } else if(str == "enter time") {
-        return "Time of Entry to the United States"
-    } else if(str == "unemployed") {
-        return "Unemployment Statistics"
-    } else if(str == "business") {
-        return "Business Owners";
-    }
-    return str.replace(/\w\S*/g, function(txt){
-        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    });
-}
-
-function toDisplayCase(str) {
-    if(str == "citizen") {
-        return "CITIZENSHIP STATUS";
-    } else if(str == "marriage") {
-        return "MARITAL STATUS";
-    } else if(str == "enter time") {
-        return "TIME OF ENTRY TO THE UNITED STATES"
-    } else if(str == "unemployed") {
-        return "UNEMPLOYMENT STATISTICS"
-    } else if(str == "business") {
-        return "BUSINESS OWNERS";
-    }
-
-    return str.toUpperCase();
-}
-
-// Get the correct rows from all data for these features
-function getGroup(data, group, changeFeature = false) {
-    start = 0;
-    end = 0;
-    switch(group) {
-        case "population": start = 0; end = 1;
-            break;
-        case "age detail": start = 1; end = 19;
-            break;
-        case "age summary": start = 19; end = 23;
-            break;
-        case "gender": start = 23; end = 25;
-            break;
-        case "marriage": start = 25; end = 30;
-            break;
-        case "citizen": start = 30; end = 32;
-            break;
-        case "enter time": start = 32; end = 34;
-            break;
-        case "education": start = 34; end = 37;
-            break;
-        case "civilian labor force": start = 37; end = 39;
-            break;
-        case "unemployed": start = 39; end = 41;
-            break;
-        case "employment type": start = 41; end = 45;
-            break;
-        case "employment by industry": start = 45; end = 52;
-            break;
-        case "employment by occupation": start = 52; end = 60;
-            break;
-        case "income": start = 60; end = 62;
-            break;
-        case "business": start = 62; end = 64;
-            break;
-        default:
-            break;
-    }
-    if(changeFeature) {
-        currFeature = d3.min([d3.max([start, currFeature]), end - 1]);
-    }
-    return data.slice(start, end);
-}
-
-// util function
-function rowSum(data) {
-    s = 0;
-    for(let k in data) {
-        if(k) {
-            v = data[k];
-            s = s+v/5;
-        }
-    }
-    return s;
-}
-
-function columnMax(group, state) {
-    m = -Infinity;
-    for(i = 0; i < group.length; ++i) {
-        v = group[i][state];
-        if(m < v) m = v;
-    }
-    return m;
-}
-
-function numberWithComma(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-function mapToState(mapId) {
-    return STATE_MAP_KEYS[mapId] || 'MASSACHUSETTS';
-};
-
-// Removes any extra ',' from the data and converts to float
-function dataPreprocess(data) {
-    rst = {};
-    for(i = 0; i < data.length; ++i) {
-        for(let k in data[i]) {
-            if(k) {
-                numStr = data[i][k].replace(/[,]/g, '');
-                data[i][k] = parseFloat(numStr);
-            }                 
-        }
-    }
-    return data;
-}
-
-// Get state color as a percentage of the whole
-function stateMapColor(d) {
-    c = chartData[currFeature][d.id]
-    return mapColor(c);
-}
-
-// Reload maps and tip for state mouse-over
-function mouseOverMapHandler(d, i) {
-    mapTip.show(d, i);
-    currState = d.id;
-    redrawData();
-}
-
-function mouseLeaveMapHandler(d, i) {
-    mapTip.hide();
-    currState = lockedState;
-    redrawData();
-}
-
-function clickMapHandler(d, i) {
-    lockedState = d.id;
-    currState = lockedState;
-    redrawData();
-}
-
-// After data is loaded, load the map
-function dataReady(error, us, data) {
-    if (error) throw error;
-    mapData = us;
-    chartData = dataPreprocess(data);
-    setFeature(currGroup, currGroupName);
-}
-
-// Reload the map for this feature
-function clickDataPointHandler(d, i) {
-    chartData.forEach((e, i) => {
-        if(e[""] == d[""]) currFeature = i;
-    });
-
-    //Set display values in Bar Chart section
-    document.getElementById("barDataCategory").innerHTML = d[""].toUpperCase();
-    document.getElementById("barDataValue").innerHTML = numberWithComma(parseInt(d[currState]));
-    showMap();
-}
-
-// Same as above
-function clickPie(d, i) {
-    clickDataPointHandler(d.data, i);
-}
+//#region Data Visualize Methods
 
 // Load the map
-function showMap() {
-    mapSvg.selectAll("g").remove();
-    mapSvg.selectAll("path").remove();
-    mapColor = null;
+function showMap(map, mapPath) {
+    map.selectAll("g").remove();
+    map.selectAll("path").remove();
+    let mapColor = null;
 
     color = d3.scaleLinear()
                 .domain([0, rowSum(chartData[currFeature])])
@@ -290,7 +116,7 @@ function showMap() {
         return color(chartData[currFeature][d.id])
     };
 
-    mapSvg.append("g")
+    map.append("g")
             .attr("class", "state-inner")
             .selectAll("path")
             .data(topojson.feature(mapData, mapData.objects.states).features)
@@ -301,7 +127,7 @@ function showMap() {
             .on("mouseleave", mouseLeaveMapHandler)
             .on("click", clickMapHandler);
 
-    mapSvg.append("path")
+    map.append("path")
             .datum(topojson.mesh(mapData, mapData.objects.states, (a, b) => a !== b))
             .attr("class", "states")
             .attr("d", mapPath);
@@ -438,7 +264,7 @@ function showPieChart(pieChart) {
     arc.append("path")
         .attr("d", piePath)
         .attr("fill", d => pieColor(d.data[""]))
-        .on("click", clickPie)
+        .on("click", clickPieHandler)
         .on("mouseover", pieTip.show)
         .on("mouseout", pieTip.hide);
     
@@ -469,12 +295,197 @@ function showPieChart(pieChart) {
     document.getElementById("stateHeader").innerHTML = mapToState(currState);
 }
 
-// Update for feature click
 function setFeature(currGroupVal, currGroupNameVal) {
     document.getElementById("displayedCategory").innerHTML = toDisplayCase(currGroupVal);
     document.getElementById("dropdownMenuButton").innerHTML = currGroupNameVal.toUpperCase();
     currGroup = currGroupVal;
     getGroup(chartData, currGroupVal, true);
-    showMap();
-    redrawData();
+    showMap(mapSvg, mapSvgPath);
+    redrawDataHandler();
 }   
+
+// Get state color as a percentage of the whole
+function stateMapColor(d) {
+    c = chartData[currFeature][d.id]
+    return mapColor(c);
+}
+
+//#endregion
+
+//#region Data Helper Methods
+
+// After data is loaded, load the map
+function dataReady(error, us, data) {
+    if (error) throw error;
+    mapData = us;
+    chartData = dataPreprocess(data);
+    setFeature(currGroup, currGroupName);
+}
+
+// Removes any extra ',' from the data and converts to float
+function dataPreprocess(data) {
+    rst = {};
+    for(i = 0; i < data.length; ++i) {
+        for(let k in data[i]) {
+            if(k) {
+                numStr = data[i][k].replace(/[,]/g, '');
+                data[i][k] = parseFloat(numStr);
+            }                 
+        }
+    }
+    return data;
+}
+
+// Get the correct rows from all data for these features
+function getGroup(data, group, changeFeature = false) {
+    start = 0;
+    end = 0;
+    switch(group) {
+        case "population": start = 0; end = 1;
+            break;
+        case "age detail": start = 1; end = 19;
+            break;
+        case "age summary": start = 19; end = 23;
+            break;
+        case "gender": start = 23; end = 25;
+            break;
+        case "marriage": start = 25; end = 30;
+            break;
+        case "citizen": start = 30; end = 32;
+            break;
+        case "enter time": start = 32; end = 34;
+            break;
+        case "education": start = 34; end = 37;
+            break;
+        case "civilian labor force": start = 37; end = 39;
+            break;
+        case "unemployed": start = 39; end = 41;
+            break;
+        case "employment type": start = 41; end = 45;
+            break;
+        case "employment by industry": start = 45; end = 52;
+            break;
+        case "employment by occupation": start = 52; end = 60;
+            break;
+        case "income": start = 60; end = 62;
+            break;
+        case "business": start = 62; end = 64;
+            break;
+        default:
+            break;
+    }
+    if(changeFeature) {
+        currFeature = d3.min([d3.max([start, currFeature]), end - 1]);
+    }
+    return data.slice(start, end);
+}
+
+//#endregion
+
+//#region Event Handlers
+
+// Add resize listener to redraw data charts  
+function redrawDataHandler() {
+    document.getElementById("displayedState").innerHTML = mapToState(currState);
+    showBarChart(barSvg);
+    showPieChart(pieSvg);
+}
+window.addEventListener("resize", redrawDataHandler);
+
+function mouseOverMapHandler(d, i) {
+    mapTip.show(d, i);
+    currState = d.id;
+    redrawDataHandler();
+}
+
+function mouseLeaveMapHandler(d, i) {
+    mapTip.hide();
+    currState = lockedState;
+    redrawDataHandler();
+}
+
+function clickMapHandler(d, i) {
+    lockedState = d.id;
+    currState = lockedState;
+    redrawDataHandler();
+}
+
+function clickDataPointHandler(d, i) {
+    chartData.forEach((e, i) => {
+        if(e[""] == d[""]) currFeature = i;
+    });
+
+    document.getElementById("barDataCategory").innerHTML = d[""].toUpperCase();
+    document.getElementById("barDataValue").innerHTML = numberWithComma(parseInt(d[currState]));
+    showMap(mapSvg, mapSvgPath);
+}
+
+function clickPieHandler(d, i) {
+    clickDataPointHandler(d.data, i);
+}
+
+//#endregion
+
+//#region Utility Methods
+
+function toTitleCase(str) {
+    if(str == "citizen") {
+        return "Citizenship Status";
+    } else if(str == "marriage") {
+        return "Marital Status";
+    } else if(str == "enter time") {
+        return "Time of Entry to the United States"
+    } else if(str == "unemployed") {
+        return "Unemployment Statistics"
+    } else if(str == "business") {
+        return "Business Owners";
+    }
+    return str.replace(/\w\S*/g, function(txt){
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+}
+
+function toDisplayCase(str) {
+    if(str == "citizen") {
+        return "CITIZENSHIP STATUS";
+    } else if(str == "marriage") {
+        return "MARITAL STATUS";
+    } else if(str == "enter time") {
+        return "TIME OF ENTRY TO THE UNITED STATES"
+    } else if(str == "unemployed") {
+        return "UNEMPLOYMENT STATISTICS"
+    } else if(str == "business") {
+        return "BUSINESS OWNERS";
+    }
+
+    return str.toUpperCase();
+}
+
+function rowSum(data) {
+    s = 0;
+    for(let k in data) {
+        if(k) {
+            v = data[k];
+            s = s+v/5;
+        }
+    }
+    return s;
+}
+
+function columnMax(group, state) {
+    m = -Infinity;
+    for(i = 0; i < group.length; ++i) {
+        v = group[i][state];
+        if(m < v) m = v;
+    }
+    return m;
+}
+
+function numberWithComma(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function mapToState(mapId) {
+    return STATE_MAP_KEYS[mapId] || 'MASSACHUSETTS';
+};
+//#endregion
