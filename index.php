@@ -70,10 +70,26 @@
 
       <div class="container-fluid data-container">
         <div class="row">
-          <div class="col-12 pie-data-container">
-            <div class="state-header">
-              <h2 id="stateHeader"></h2>
+          <div class="state-header">
+            <h2 id="stateHeader"></h2>
+          </div>
+          <div class="col-12 col-md-6 bar-data-container">
+            <div class="data-description">
+              <h3 id="barDataCategory"></h3>
+              <h1 id="barDataValue"></h1>
             </div>
+            <div id="barChartContainer" class="bar-chart-container">
+              <svg id="bar" 
+                mobile-sm-width="300" 
+                mobile-sm-height="250"
+                mobile-md-width="350" 
+                mobile-md-height="350"
+                width="500" 
+                height="400">
+              </svg>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 pie-data-container">
             <div class="pie-chart-container">
               <svg id="pie" 
                 mobile-sm-width="280" 
@@ -81,22 +97,6 @@
                 mobile-md-width="400" 
                 mobile-md-height="400"
                 width="400" 
-                height="400">
-              </svg>
-            </div>
-          </div>
-          <div class="col-12 bar-data-container">
-            <div class="data-description">
-              <h3 id="barDataCategory"></h3>
-              <h1 id="barDataValue"></h1>
-            </div>
-            <div id="barChartContainer" class="bar-chart-container">
-              <svg id="bar" 
-                mobile-sm-width="280" 
-                mobile-sm-height="200"
-                mobile-md-width="500" 
-                mobile-md-height="400"
-                width="500" 
                 height="400">
               </svg>
             </div>

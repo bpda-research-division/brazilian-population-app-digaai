@@ -5,56 +5,56 @@
  */
 
 const STATE_MAP_KEYS = {
-    '01': 'ALABAMA',
-    '02': 'ALASKA',
-    '04': 'ARIZONA',
-    '05': 'ARKANSAS',
-    '06': 'CALIFORNIA',
-    '08': 'COLORADO',
-    '09': 'CONNECTICUT',
-    '10': 'DELAWARE',
-    '12': 'FLORIDA',
-    '13': 'GEORGIA',
-    '15': 'HAWAII',
-    '16': 'IDAHO',
-    '17': 'ILLINOIS',
-    '18': 'INDIANA',
-    '19': 'IOWA',
-    '20': 'KANSAS',
-    '21': 'KENTUCKY',
-    '22': 'LOUISIANA',
-    '23': 'MAINE',
-    '24': 'MARYLAND',
-    '25': 'MASSACHUSETTS',
-    '26': 'MICHIGAN',
-    '27': 'MINNESOTA',
-    '28': 'MISSISSIPPI',
-    '29': 'MISSOURI',
-    '30': 'MONTANA',
-    '31': 'NEBRASKA',
-    '32': 'NEVADA',
-    '33': 'NEW HAMPSHIRE',
-    '34': 'NEW JERSEY',
-    '35': 'NEW MEXICO',
-    '36': 'NEW YORK',
-    '37': 'NORTH CAROLINA',
-    '38': 'NORTH DAKOTA',
-    '39': 'OHIO',
-    '40': 'OKLAHOMA',
-    '41': 'OREGON',
-    '42': 'PENNSYLVANIA',
-    '44': 'RHODE ISLAND',
-    '45': 'SOUTH CAROLINA',
-    '46': 'SOUTH DAKOTA',
-    '47': 'TENNESSEE',
-    '48': 'TEXAS',
-    '49': 'UTAH',
-    '50': 'VERMONT',
-    '51': 'VIRGINIA',
-    '53': 'WASHINGTON',
-    '54': 'WEST VIRGINIA',
-    '55': 'WISCONSIN',
-    '56': 'WYOMING'
+    "01": "ALABAMA",
+    "02": "ALASKA",
+    "04": "ARIZONA",
+    "05": "ARKANSAS",
+    "06": "CALIFORNIA",
+    "08": "COLORADO",
+    "09": "CONNECTICUT",
+    "10": "DELAWARE",
+    "12": "FLORIDA",
+    "13": "GEORGIA",
+    "15": "HAWAII",
+    "16": "IDAHO",
+    "17": "ILLINOIS",
+    "18": "INDIANA",
+    "19": "IOWA",
+    "20": "KANSAS",
+    "21": "KENTUCKY",
+    "22": "LOUISIANA",
+    "23": "MAINE",
+    "24": "MARYLAND",
+    "25": "MASSACHUSETTS",
+    "26": "MICHIGAN",
+    "27": "MINNESOTA",
+    "28": "MISSISSIPPI",
+    "29": "MISSOURI",
+    "30": "MONTANA",
+    "31": "NEBRASKA",
+    "32": "NEVADA",
+    "33": "NEW HAMPSHIRE",
+    "34": "NEW JERSEY",
+    "35": "NEW MEXICO",
+    "36": "NEW YORK",
+    "37": "NORTH CAROLINA",
+    "38": "NORTH DAKOTA",
+    "39": "OHIO",
+    "40": "OKLAHOMA",
+    "41": "OREGON",
+    "42": "PENNSYLVANIA",
+    "44": "RHODE ISLAND",
+    "45": "SOUTH CAROLINA",
+    "46": "SOUTH DAKOTA",
+    "47": "TENNESSEE",
+    "48": "TEXAS",
+    "49": "UTAH",
+    "50": "VERMONT",
+    "51": "VIRGINIA",
+    "53": "WASHINGTON",
+    "54": "WEST VIRGINIA",
+    "55": "WISCONSIN",
+    "56": "WYOMING"
 };
 
 //#region Initialize Data
@@ -67,6 +67,7 @@ let lockedState = "25";
 let currState = "25";
 let currGroup = "population";
 let currGroupName = "Population";
+let selectedStateSvg;
 
 // Define map and graph svgs with tooltips
 let mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%");
@@ -139,11 +140,11 @@ function showBarChart(barChart) {
     let screenWidth = parseInt(document.body.clientWidth);
 
     if (screenWidth < 768) {
-        barMargin = { top: 20, right: 50, bottom: 50, left: 100 };
+        barMargin = { top: 20, right: 0, bottom: 50, left: 50 };
         barWidth = +barChart.attr("mobile-sm-width");
         barHeight = +barChart.attr("mobile-sm-height");
     } else if (screenWidth < 992) {
-        barMargin = { top: 20, right: 0, bottom: 150, left: 100 };
+        barMargin = { top: 20, right: 0, bottom: 150, left: 50 };
         barWidth = +barChart.attr("mobile-md-width");
         barHeight = +barChart.attr("mobile-md-height");
     } else {
@@ -404,7 +405,11 @@ function mouseLeaveMapHandler(d, i) {
     redrawDataHandler();
 }
 
-function clickMapHandler(d, i) {
+function clickMapHandler(d, i, mapStates) {
+    // console.log('d', d);
+    // console.log('i', i);
+    // console.log(more[i]);
+    // mapStates[i].setAttribute("fill", "orange");
     lockedState = d.id;
     currState = lockedState;
     redrawDataHandler();
