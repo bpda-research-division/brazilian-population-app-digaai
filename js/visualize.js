@@ -4,7 +4,7 @@
  * Description: Visualizing ACS estimates.
  */
 
-const STATE_MAP = {
+const STATE_MAP_KEYS = {
     '01': 'ALABAMA',
     '02': 'ALASKA',
     '04': 'ARIZONA',
@@ -57,40 +57,55 @@ const STATE_MAP = {
     '56': 'WYOMING'
 };
 
-var mapData = null,
+let mapData = null,
     chartData = null;
 
-var currFeature = 0;
-var currState = "25";
-var currGroup = "population";
-var currGroupName = "Population";
+let currFeature = 0;
+let lockedState = "25";
+let currState = "25";
+let currGroup = "population";
+let currGroupName = "Population";
 
 // Define map and graph svgs
-var mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%"),
+let mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%"),
     mapPath = d3.geoPath(),
     mapColor = null;
-var barSvg = d3.select("#bar");
-var pieSvg = d3.select("#pie");
+let barSvg = d3.select("#bar");
+let pieSvg = d3.select("#pie");
 
 // Define tooltips for map and graphs
-var mapTip = d3.tip()
+let mapTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0])
                 .html(d => chartData[currFeature][""] + " : " + chartData[currFeature][d.id]);
 
-var barTip = d3.tip()
+let barTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0])
                 .html(d => d[""] + " : " + d[currState]);
 
-// it would be better for this to display a percentage rather than value
-var pieTip = d3.tip()
+let pieTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0]) 
                 .html(d => d.data[""] + " : " + d.data.percentage); 
+
 mapSvg.call(mapTip);
 barSvg.call(barTip);
 pieSvg.call(pieTip);
+
+// Load data
+d3.queue()
+    .defer(d3.json, "https://d3js.org/us-10m.v1.json")
+    .defer(d3.csv, "resources/all_data.csv")
+    .await(dataReady);
+
+// Add resize listener to redraw data charts  
+function redrawData() {
+    document.getElementById("displayedState").innerHTML = mapToState(currState);
+    showBarChart(barSvg);
+    showPieChart(pieSvg);
+}
+window.addEventListener("resize", redrawData);
 
 function toTitleCase(str) {
     if(str == "citizen") {
@@ -111,7 +126,7 @@ function toTitleCase(str) {
 
 function toDisplayCase(str) {
     if(str == "citizen") {
-        return "CITIZEN STATUS";
+        return "CITIZENSHIP STATUS";
     } else if(str == "marriage") {
         return "MARITAL STATUS";
     } else if(str == "enter time") {
@@ -124,14 +139,6 @@ function toDisplayCase(str) {
 
     return str.toUpperCase();
 }
-
-// // Resizes the map to fit the screen    
-function redraw() {
-    showBarChart(barSvg);
-    showPieChart(pieSvg);
-}
-window.addEventListener("resize", redraw);
-
 
 // Get the correct rows from all data for these features
 function getGroup(data, group, changeFeature = false) {
@@ -180,7 +187,7 @@ function getGroup(data, group, changeFeature = false) {
 // util function
 function rowSum(data) {
     s = 0;
-    for(var k in data) {
+    for(let k in data) {
         if(k) {
             v = data[k];
             s = s+v/5;
@@ -203,14 +210,14 @@ function numberWithComma(x) {
 }
 
 function mapToState(mapId) {
-    return STATE_MAP[mapId] || 'MASSACHUSETTS';
+    return STATE_MAP_KEYS[mapId] || 'MASSACHUSETTS';
 };
 
 // Removes any extra ',' from the data and converts to float
 function dataPreprocess(data) {
     rst = {};
     for(i = 0; i < data.length; ++i) {
-        for(var k in data[i]) {
+        for(let k in data[i]) {
             if(k) {
                 numStr = data[i][k].replace(/[,]/g, '');
                 data[i][k] = parseFloat(numStr);
@@ -226,19 +233,23 @@ function stateMapColor(d) {
     return mapColor(c);
 }
 
-// Load data
-d3.queue()
-    .defer(d3.json, "https://d3js.org/us-10m.v1.json")
-    .defer(d3.csv, "resources/all_data.csv")
-    .await(dataReady);
-
 // Reload maps and tip for state mouse-over
-function mouseOver(d, i) {
+function mouseOverMapHandler(d, i) {
     mapTip.show(d, i);
     currState = d.id;
-    document.getElementById("displayedState").innerHTML = mapToState(d.id);
-    showBarChart(barSvg);
-    showPieChart(pieSvg);
+    redrawData();
+}
+
+function mouseLeaveMapHandler(d, i) {
+    mapTip.hide();
+    currState = lockedState;
+    redrawData();
+}
+
+function clickMapHandler(d, i) {
+    lockedState = d.id;
+    currState = lockedState;
+    redrawData();
 }
 
 // After data is loaded, load the map
@@ -246,12 +257,11 @@ function dataReady(error, us, data) {
     if (error) throw error;
     mapData = us;
     chartData = dataPreprocess(data);
-    document.getElementById("displayedState").innerHTML = mapToState(currState);
     setFeature(currGroup, currGroupName);
 }
 
 // Reload the map for this feature
-function clickDataPoint(d, i) {
+function clickDataPointHandler(d, i) {
     chartData.forEach((e, i) => {
         if(e[""] == d[""]) currFeature = i;
     });
@@ -264,7 +274,7 @@ function clickDataPoint(d, i) {
 
 // Same as above
 function clickPie(d, i) {
-    clickDataPoint(d.data, i);
+    clickDataPointHandler(d.data, i);
 }
 
 // Load the map
@@ -287,8 +297,9 @@ function showMap() {
             .enter().append("path")
             .attr("fill", d => mapColor(d))
             .attr("d", mapPath)
-            .on("mouseover", mouseOver)
-            .on("mouseleave", mapTip.hide);
+            .on("mouseover", mouseOverMapHandler)
+            .on("mouseleave", mouseLeaveMapHandler)
+            .on("click", clickMapHandler);
 
     mapSvg.append("path")
             .datum(topojson.mesh(mapData, mapData.objects.states, (a, b) => a !== b))
@@ -358,7 +369,7 @@ function showBarChart(barChart) {
         .attr("y", d => y(d[currState]))
         .attr("width", x.bandwidth())
         .attr("height", d => barHeight - y(d[currState]))
-        .on("click", clickDataPoint)
+        .on("click", clickDataPointHandler)
         .on("mouseover", barTip.show)
         .on("mouseout", barTip.hide);
 
@@ -398,7 +409,7 @@ function showPieChart(pieChart) {
     g = pieChart.append("g").attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")"),
     pieColor = d3.scaleOrdinal(d3.schemeCategory20c);
 
-    var tots = d3.sum(data, function(d) { 
+    let tots = d3.sum(data, function(d) { 
             return d[currState]; 
         });
 
@@ -465,6 +476,5 @@ function setFeature(currGroupVal, currGroupNameVal) {
     currGroup = currGroupVal;
     getGroup(chartData, currGroupVal, true);
     showMap();
-    showBarChart(barSvg);
-    showPieChart(pieSvg);
+    redrawData();
 }   

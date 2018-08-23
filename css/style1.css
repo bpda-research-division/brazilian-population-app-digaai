@@ -31,7 +31,12 @@
   fill: none;
 }
 
+.state-inner:hover {
+  cursor: pointer;
+}
+
 .state-inner path:hover {
+    cursor: pointer;
     fill: orange;
 }
 
@@ -46,7 +51,7 @@
 }
 
 .bar.selected {
-  fill: #F2C441;
+  fill: orange;
 }
 
 .bar:hover {
@@ -185,7 +190,7 @@
 }
 
 .map-control.state-container h2 {
-  color: #F2C441;
+  color: orange;
 }
 
 .category-dropdown {
@@ -212,7 +217,7 @@
 /* Bar Container Component */
 .bar-data-container {
   width: 100%;
-  height: 800px;
+  height: 450px;
   box-sizing: border-box;
 }
 
@@ -226,7 +231,7 @@
   font-size: 68px;
   line-height: 0.8;
   font-weight: 700;
-  color: #F2C441;
+  color: orange;
 }
 
 .bar-data-container .data-description h3 {
@@ -243,6 +248,10 @@
 }
 
 @media (min-width: 768px) {
+  .bar-data-container {
+    height: 800px;
+  }
+
   .bar-data-container .data-description {
     padding: 80px 0 60px 50px;
   }
@@ -269,7 +278,7 @@
 .pie-data-container .state-header {
   position: absolute;
   top: 20px;
-  right: 25px;
+  right: 40px;
 }
 
 .pie-data-container .state-header h2 {
@@ -277,7 +286,7 @@
   font-size: 36px;
   font-weight: 600;
   line-height: 0.9;
-  color: #F2C441;
+  color: orange;
 }
 
 @media (min-width: 768px) {
