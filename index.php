@@ -19,11 +19,6 @@
 
   <body>
     <main role="main">
-      <!-- <div class="logo-banner">
-        <div class="logo-banner-img">
-          <img src="http://digaai.dharmeshtarapore.com:8080/wp-content/themes/digaai/img/diggai.png" alt="logo"/>     
-        </div>
-      </div> -->
       <div class="title-banner">
         <div class="title-banner-img">
           <img src="http://digaai.dharmeshtarapore.com:8080/wp-content/themes/digaai/img/diggai.png" alt="logo"/>     
