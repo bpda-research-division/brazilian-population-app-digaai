@@ -19,12 +19,15 @@
 
   <body>
     <main role="main">
-      <div class="logo-banner">
+      <!-- <div class="logo-banner">
         <div class="logo-banner-img">
           <img src="http://digaai.dharmeshtarapore.com:8080/wp-content/themes/digaai/img/diggai.png" alt="logo"/>     
         </div>
-      </div>
+      </div> -->
       <div class="title-banner">
+        <div class="title-banner-img">
+          <img src="http://digaai.dharmeshtarapore.com:8080/wp-content/themes/digaai/img/diggai.png" alt="logo"/>     
+        </div>
         <div class="header-title">
           <h1>VISUALIZING THE <span>BRAZILIAN</span> DIASPORA</h1>
         </div>
@@ -73,7 +76,7 @@
         </div>
       </div>
 
-      <div class="container-fluid data-container">
+      <div id="dataContainer" class="container-fluid data-container">
         <div class="row">
           <div class="col-12 col-md-6 data-description">
               <h3 id="dataCategory"></h3>
@@ -86,6 +89,7 @@
         <div class="row">
           <div class="col-12 col-md-6 bar-data-container">
             <div id="barChartContainer" class="bar-chart-container">
+              <!-- Might be able to set width and height to 100% and leverage css media queries for sizing -->
               <svg id="bar" 
                 sm-width="300" 
                 sm-height="300"

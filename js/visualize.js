@@ -164,10 +164,7 @@ function showBarChart(barChart) {
     let data = getGroup(chartData, currGroup);
     let x = d3.scaleBand().rangeRound([0, barWidth]).padding(0.1);
     let y = d3.scaleLinear().rangeRound([barHeight, 0]);
-    x.domain(data.map(d => {
-        console.log(d[""]);
-        return d[""];
-    }));
+    x.domain(data.map(d => d[""]));
     y.domain([0, columnMax(data, currState)]);
 
     let barColor = d3.scaleOrdinal(d3.schemeCategory20c);
@@ -184,7 +181,7 @@ function showBarChart(barChart) {
         .attr("dy", ".35em")
         .attr("transform", "rotate(90)")
         .style("text-anchor", "start")
-        .attr("opacity", "0"); //hides text
+        .attr("opacity", "0"); //hides x-axis values
 
     g.append("g")
         .call(d3.axisLeft(y))
@@ -231,8 +228,8 @@ function showPieChart(pieChart) {
         pieHeight = +pieChart.attr("lg-height");
     }
 
-    pieChart.attr("width", "\{pieWidth\}");
-    pieChart.attr("height", "\{pieHeight\}");
+    pieChart.attr("width", pieWidth);
+    pieChart.attr("height", pieHeight);
 
     pieWidth = pieWidth - pieMargin.left - pieMargin.right;
     pieHeight = pieHeight - pieMargin.top - pieMargin.bottom;
@@ -465,6 +462,7 @@ function clickMapHandler(d, i, mapStates) {
     lockedState = d.id;
     currState = lockedState;
     redrawDataHandler();
+    document.getElementById("dataContainer").scrollIntoView();
 }
 
 function clickDataPointHandler(d, i) {
