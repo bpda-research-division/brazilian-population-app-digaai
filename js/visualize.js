@@ -67,7 +67,8 @@ let lockedState = "25";
 let currState = "25";
 let currGroup = "population";
 let currGroupName = "Population";
-let selectedStateSvg;
+let lastStateRef = null;
+let lastStateHighlightColor = null;
 
 // Define map and graph svgs with tooltips
 let mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%");
@@ -315,9 +316,6 @@ function showPieChart(pieChart) {
                 return d.data.percentage;
             })
             .each((d,i, element) => {
-                console.log('d', d);
-                console.log('i', i);
-                console.log('more', element);
                 let bbox = element[i].getBBox();
                 d.sx = d.x - bbox.width/2 - 2;
                 d.ox = d.x + bbox.width/2 + 2;
@@ -450,10 +448,23 @@ function mouseLeaveMapHandler(d, i) {
 }
 
 function clickMapHandler(d, i, mapStates) {
-    // console.log('d', d);
-    // console.log('i', i);
-    // console.log(more[i]);
-    // mapStates[i].setAttribute("fill", "orange");
+    if(lastStateRef !== null)
+        lastStateRef.attr("fill", lastStateHighlightColor);
+        
+    let currStateRef = d3.select(this);
+    lastStateRef = currStateRef;
+    lastStateHighlightColor = lastStateRef.attr("fill");
+    currStateRef.attr("fill", "orange");
+
+    // if(lastObjRef != null) {
+    //     lastObjRef.style("fill", lastHighlightColor);
+    // }
+    // lastObjRef = d3.select(this);
+    // if(lastObjRef.attr("fill") != "orange") {
+    //     lastHighlightColor = lastObjRef.attr("fill");
+    //     d3.select(this).attr("fill", "orange");
+    // }
+
     lockedState = d.id;
     currState = lockedState;
     redrawDataHandler();

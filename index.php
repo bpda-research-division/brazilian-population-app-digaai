@@ -90,7 +90,7 @@
                 mobile-md-width="350" 
                 mobile-md-height="350"
                 width="500" 
-                height="500">
+                height="400">
               </svg>
             </div>
           </div>
