@@ -66,6 +66,38 @@
   margin-top: 10px;
 }
 
+/* Logo Banner */
+.logo-banner {
+  width: 100%;
+  height: 75px;
+  background-color: #fff;
+}
+
+.logo-banner .logo-banner-img {
+  width: 75x;
+  height: 75px;
+  margin: 0 auto;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.logo-banner .logo-banner-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+@media (min-width: 768px) {
+  .logo-banner {
+    height: 100px;
+  }
+  
+  .logo-banner .logo-banner-img {
+    width: 100x;
+    height: 100px;
+  }
+}
+
 /* Title Banner Component */
 .title-banner {
   width: 100%;
@@ -217,19 +249,21 @@
 }
 
 /* Data Container Component */
+.data-container {
+  background-color: #3B92CF;
+}
+
 .data-container .state-header {
   display: none;
-  position: absolute;
-  top: 20px;
-  right: 20px;
 }
 
 .data-container .state-header h2 {
-  margin: 0;
+  margin: 20px 0 0 0;
   font-size: 42px;
   font-weight: 600;
   line-height: 0.9;
   color: orange;
+  text-align: right;
 }
 
 @media (min-width: 768px) {
@@ -258,8 +292,17 @@
 }
 
 .bar:hover {
-  fill: brown;
+  fill: orange;
   cursor: pointer;
+}
+
+g path.domain,
+.tick line  {
+  stroke: #fff;
+}
+
+.tick text {
+  fill: #fff;
 }
 
 .bar-data-container {
@@ -271,7 +314,7 @@
 
 .bar-data-container .data-description {
   width: 100%;
-  padding: 30px 0 30px 15px;
+  padding: 30px 0 30px 0;
 }
 
 .bar-data-container .data-description h1 {
@@ -286,6 +329,7 @@
   margin: 0;
   font-size: 28px;
   font-weight: 300;
+  color: white;
 }
 
 .bar-data-container .bar-chart-container {
@@ -301,7 +345,7 @@
   }
 
   .bar-data-container .data-description {
-    padding: 80px 0 60px 50px;
+    padding: 0 0 60px 50px;
   }
 
   .bar-data-container .data-description h1 {
@@ -321,7 +365,7 @@
 }
 
 .arc path:hover {
-  fill: brown;
+  fill: orange;
   cursor: pointer;
 }
 
@@ -330,10 +374,19 @@
     display: none;
 }
 
+.pie-label {
+  fill: white;
+  /* font-size: 28px; */
+  font-weight: 600;
+}
+
 .pie-data-container {
+  display: flex;
+  justify-content: center;
+  flex-flow: column;
   width: 100%;
-  padding-top: 100px;
-  padding-bottom: 25px;
+  /* padding-top: 100px;
+  padding-bottom: 25px; */
   box-sizing: border-box;
   background-color: #3B92CF;
 }
@@ -343,10 +396,13 @@
   box-sizing: border-box;
 }
 
+/* Footer Container Component */
+.footer-container {
+  background-color: #3B92CF;
+  color: white;
+}
 
-
-@media (min-width: 768px) {
-  .pie-data-container .pie-chart-container {
-    padding-left: 140px;
-  }
+.footer-container p {
+  margin-bottom: 0;
+  padding-bottom: 20px;
 }

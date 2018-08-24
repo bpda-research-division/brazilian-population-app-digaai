@@ -165,6 +165,8 @@ function showBarChart(barChart) {
     x.domain(data.map(d => d[""]));
     y.domain([0, columnMax(data, currState)]);
 
+    let barColor = d3.scaleOrdinal(d3.schemeCategory20c);
+
     let g = barChart.append("g")
                     .attr("transform", "translate(" + barMargin.left + "," + barMargin.top + ")");
 
@@ -196,6 +198,7 @@ function showBarChart(barChart) {
         .attr("y", d => y(d[currState]))
         .attr("width", x.bandwidth())
         .attr("height", d => barHeight - y(d[currState]))
+        // .attr("fill", d => barColor(d[""])) //to enable commento ut css .bar fill color
         .on("click", clickDataPointHandler)
         .on("mouseover", barTip.show)
         .on("mouseout", barTip.hide);
@@ -219,7 +222,7 @@ function showPieChart(pieChart) {
         pieWidth = +pieChart.attr("mobile-md-width");
         pieHeight = +pieChart.attr("mobile-md-height");
     } else {
-        pieMargin = { top: 0, right: 0, bottom: 100, left: 0 };
+        pieMargin = { top: 125, right: 125, bottom: 125, left: 125 };
         pieWidth = +pieChart.attr("width");
         pieHeight = +pieChart.attr("height");
     }
@@ -268,30 +271,71 @@ function showPieChart(pieChart) {
         .on("click", clickPieHandler)
         .on("mouseover", pieTip.show)
         .on("mouseout", pieTip.hide);
-    
-    wid = data.length * 12;
-    x = d3.scaleBand().rangeRound([0, wid]).padding(0.1);
-    x.domain(data.map(d => d[""]));
 
-    barSize = x.bandwidth();
-    g = g.append("g").attr("transform", "translate(" + -pieWidth / 4 + "," + pieHeight / 2 + ")")
-    g.selectAll(".bar")
-        .data(data)
-        .enter().append("rect")
-        .attr("x", d => x(d[""]))
-        .attr("y", 6)
-        .attr("width", barSize)
-        .attr("height", barSize)
-        .attr("fill", d => pieColor(d[""]));
-    
-    g.append("g")
-        .attr("class", "pie-axis")
-        .call(d3.axisBottom(x))
-        .selectAll("text")
-        .attr("y", -barSize / 2)
-        .attr("x", 10 + barSize)
-        .attr("transform", "rotate(90)")
-        .style("text-anchor", "start");
+    wid = data.length * 12;
+        x = d3.scaleBand().rangeRound([0, wid]).padding(0.1);
+        x.domain(data.map(d => d[""]));
+
+    if (data.length > 5) {
+        barSize = x.bandwidth();
+        g = g.append("g").attr("transform", "translate(" + -pieWidth / 4 + "," + pieHeight / 2 + ")")
+        g.selectAll(".bar")
+            .data(data)
+            .enter().append("rect")
+            .attr("x", d => x(d[""]))
+            .attr("y", 6)
+            .attr("width", barSize)
+            .attr("height", barSize)
+            .attr("fill", d => pieColor(d[""]));
+        
+        g.append("g")
+            .attr("class", "pie-axis")
+            .call(d3.axisBottom(x))
+            .selectAll("text")
+            .attr("y", -barSize / 2)
+            .attr("x", 10 + barSize)
+            .attr("transform", "rotate(90)")
+            .style("text-anchor", "start");
+    } else {
+        arc.append("text")
+            .attr("class", "pie-label")
+            .attr("text-anchor", "middle")
+            .attr("x", d => {
+                let a = d.startAngle + (d.endAngle - d.startAngle)/2 - Math.PI/2;
+                d.cx = Math.cos(a) * (pieRadius - 45);
+                return d.x = Math.cos(a) * (pieRadius + 30);
+            })
+            .attr("y", d => {
+                let a = d.startAngle + (d.endAngle - d.startAngle)/2 - Math.PI/2;
+                d.cy = Math.sin(a) * (pieRadius - 45);
+                return d.y = Math.sin(a) * (pieRadius + 30);
+            })
+            .text(d => {
+                // console.log(d);
+                return d.data.percentage;
+            })
+            .each((d,i, element) => {
+                console.log('d', d);
+                console.log('i', i);
+                console.log('more', element);
+                let bbox = element[i].getBBox();
+                d.sx = d.x - bbox.width/2 - 2;
+                d.ox = d.x + bbox.width/2 + 2;
+                d.sy = d.oy = d.y + 5;
+            });
+
+        arc.append("path")
+            .attr("class", "pointer")
+            .style("fill", "none")
+            .style("stroke", "white")
+            .attr("d", d => {
+                if(d.cx > d.ox) {
+                    return "M" + d.sx + "," + d.sy + "L" + d.ox + "," + d.oy + " " + d.cx + "," + d.cy;
+                } else {
+                    return "M" + d.ox + "," + d.oy + "L" + d.sx + "," + d.sy + " " + d.cx + "," + d.cy;
+                }
+            });
+    }
 
     document.getElementById("stateHeader").innerHTML = mapToState(currState);
 }

@@ -19,6 +19,11 @@
 
   <body>
     <main role="main">
+      <div class="logo-banner">
+        <div class="logo-banner-img">
+          <img src="http://digaai.dharmeshtarapore.com:8080/wp-content/themes/digaai/img/diggai.png" alt="logo"/>     
+        </div>
+      </div>
       <div class="title-banner">
         <div class="header-title">
           <h1>VISUALIZING THE <span>BRAZILIAN</span> DIASPORA</h1>
@@ -70,7 +75,7 @@
 
       <div class="container-fluid data-container">
         <div class="row">
-          <div class="state-header">
+          <div class="col-12 state-header">
             <h2 id="stateHeader"></h2>
           </div>
           <div class="col-12 col-md-6 bar-data-container">
@@ -85,7 +90,7 @@
                 mobile-md-width="350" 
                 mobile-md-height="350"
                 width="500" 
-                height="400">
+                height="500">
               </svg>
             </div>
           </div>
@@ -94,10 +99,10 @@
               <svg id="pie" 
                 mobile-sm-width="280" 
                 mobile-sm-height="200"
-                mobile-md-width="400" 
-                mobile-md-height="400"
-                width="400" 
-                height="400">
+                mobile-md-width="350" 
+                mobile-md-height="350"
+                width="460" 
+                height="460">
               </svg>
             </div>
           </div>
@@ -105,7 +110,7 @@
       </div>
     </main>
 
-    <footer class="container">
+    <footer class="container-fluid footer-container">
       <p>&copy; Digaai 2017-2018</p>
     </footer>
 
