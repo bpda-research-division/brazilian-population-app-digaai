@@ -21,12 +21,6 @@
                                   supported by Chrome and Opera */
 }
 
-.chart {
-    display: flex;
-    flex-direction: column;
-	  padding-top: 15px; 
-}
-
 /* d3-tip styles */
 .tip {
     line-height: 1;
@@ -66,57 +60,38 @@
   margin-top: 10px;
 }
 
-/* Logo Banner */
-.logo-banner {
-  width: 100%;
-  height: 75px;
-  background-color: #fff;
-}
-
-.logo-banner .logo-banner-img {
-  width: 75x;
-  height: 75px;
-  margin: 0 auto;
-  padding: 10px;
-  box-sizing: border-box;
-}
-
-.logo-banner .logo-banner-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-@media (min-width: 768px) {
-  .logo-banner {
-    height: 100px;
-  }
-  
-  .logo-banner .logo-banner-img {
-    width: 100x;
-    height: 100px;
-  }
-}
-
 /* Title Banner Component */
 .title-banner {
   width: 100%;
   height: 125px;
   background-color:#3B92CF;
-  padding: 0 30px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.title-banner .title-banner-img {
+  width: 125px;
+  height: 125px;
+  margin: 0;
+  padding: 10px;
   box-sizing: border-box;
 }
 
-.header-title {
+.title-banner .title-banner-img img {
   width: 100%;
   height: 100%;
+  object-fit: contain;
+}
+
+.title-banner .header-title {
   display: flex;
   flex-flow: column;
   justify-content: center;
-  margin: 0 auto;
+  margin: 0;
 }
 
-.header-title h1 {
+.title-banner .header-title h1 {
   margin: 0;
   color: white;
   line-height: 1;
@@ -128,18 +103,23 @@
 @media (min-width: 768px) {
   .title-banner {
     height: 150px;
-    padding: 0;
   }
 
-  .header-title {
+  .title-banner .title-banner-img {
+    width: 150x;
+    height: 150px;
+    padding: 30px;
+  }
+
+  .title-banner .header-title {
     width: 300px;
   }
 
-  .header-title h1 {
+  .title-banner .header-title h1 {
     font-size: 28px;
   }
 
-  .header-title h1 span {
+  .title-banner .header-title h1 span {
     font-size: 46px;
     font-weight: 500;
   }
@@ -253,6 +233,27 @@
   background-color: #3B92CF;
 }
 
+.data-container .data-description {
+  width: 100%;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.data-container .data-description h1 {
+  margin: 0;
+  font-size: 68px;
+  line-height: 0.8;
+  font-weight: 700;
+  color: orange;
+}
+
+.data-container .data-description h3 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 300;
+  color: white;
+}
+
 .data-container .state-header {
   display: none;
 }
@@ -267,12 +268,23 @@
 }
 
 @media (min-width: 768px) {
+  .data-container .data-description {
+    padding: 40px 0 60px 50px;
+  }
+
+  .data-container .data-description h1 {
+    font-size: 80px;
+  }
   .data-container .state-header {
     display: block;
   }
 }
 
 @media (min-width: 992px) {
+  .data-container .data-description h1 {
+    font-size: 128px;
+  }
+
   .data-container .state-header {
     right: 40px;
   }
@@ -307,29 +319,9 @@ g path.domain,
 
 .bar-data-container {
   width: 100%;
-  height: 450px;
+  height: 300px;
   box-sizing: border-box;
   background-color: #3B92CF;
-}
-
-.bar-data-container .data-description {
-  width: 100%;
-  padding: 30px 0 30px 0;
-}
-
-.bar-data-container .data-description h1 {
-  margin: 0;
-  font-size: 68px;
-  line-height: 0.8;
-  font-weight: 700;
-  color: orange;
-}
-
-.bar-data-container .data-description h3 {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 300;
-  color: white;
 }
 
 .bar-data-container .bar-chart-container {
@@ -339,23 +331,9 @@ g path.domain,
   box-sizing: border-box;
 }
 
-@media (min-width: 768px) {
-  .bar-data-container {
-    height: 700px;
-  }
-
-  .bar-data-container .data-description {
-    padding: 0 0 60px 50px;
-  }
-
-  .bar-data-container .data-description h1 {
-    font-size: 80px;
-  }
-}
-
 @media (min-width: 992px) {
-  .bar-data-container .data-description h1 {
-    font-size: 128px;
+  .bar-data-container {
+    height: 450px;
   }
 }
 
@@ -381,19 +359,22 @@ g path.domain,
 }
 
 .pie-data-container {
-  display: flex;
-  justify-content: center;
-  flex-flow: column;
   width: 100%;
-  /* padding-top: 100px;
-  padding-bottom: 25px; */
   box-sizing: border-box;
   background-color: #3B92CF;
 }
 
 .pie-data-container .pie-chart-container {
-  padding-left: 20px;
-  box-sizing: border-box;
+  width: 270px;
+  height: 270px;
+  margin: 0 auto;
+}
+
+@media (min-width: 992px) {
+  .pie-data-container .pie-chart-container {
+    width: 350px;
+    height: 350px;
+  }
 }
 
 /* Footer Container Component */

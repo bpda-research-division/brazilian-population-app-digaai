@@ -19,12 +19,10 @@
 
   <body>
     <main role="main">
-      <div class="logo-banner">
-        <div class="logo-banner-img">
+      <div class="title-banner">
+        <div class="title-banner-img">
           <img src="http://digaai.dharmeshtarapore.com:8080/wp-content/themes/digaai/img/diggai.png" alt="logo"/>     
         </div>
-      </div>
-      <div class="title-banner">
         <div class="header-title">
           <h1>VISUALIZING THE <span>BRAZILIAN</span> DIASPORA</h1>
         </div>
@@ -73,36 +71,39 @@
         </div>
       </div>
 
-      <div class="container-fluid data-container">
+      <div id="dataContainer" class="container-fluid data-container">
         <div class="row">
-          <div class="col-12 state-header">
+          <div class="col-12 col-md-6 data-description">
+              <h3 id="dataCategory"></h3>
+              <h1 id="dataValue"></h1>
+          </div>
+          <div class="col-6 hidden-sm-down state-header">
             <h2 id="stateHeader"></h2>
           </div>
+        </div>
+        <div class="row">
           <div class="col-12 col-md-6 bar-data-container">
-            <div class="data-description">
-              <h3 id="barDataCategory"></h3>
-              <h1 id="barDataValue"></h1>
-            </div>
             <div id="barChartContainer" class="bar-chart-container">
+              <!-- Might be able to set width and height to 100% and leverage css media queries for sizing -->
               <svg id="bar" 
-                mobile-sm-width="300" 
-                mobile-sm-height="250"
-                mobile-md-width="350" 
-                mobile-md-height="350"
-                width="500" 
-                height="400">
+                sm-width="300" 
+                sm-height="300"
+                md-width="350" 
+                md-height="350"
+                lg-width="450" 
+                lg-height="450">
               </svg>
             </div>
           </div>
           <div class="col-12 col-md-6 pie-data-container">
             <div class="pie-chart-container">
               <svg id="pie" 
-                mobile-sm-width="280" 
-                mobile-sm-height="200"
-                mobile-md-width="350" 
-                mobile-md-height="350"
-                width="460" 
-                height="460">
+                sm-width="270" 
+                sm-height="270"
+                md-width="270" 
+                md-height="270"
+                lg-width="350" 
+                lg-height="350">
               </svg>
             </div>
           </div>
