@@ -98,7 +98,7 @@ pieSvg.call(pieTip);
 // Load data
 d3.queue()
     .defer(d3.json, "https://d3js.org/us-10m.v1.json")
-    .defer(d3.csv, "resources/all_data.csv")
+    .defer(d3.csv, "resources/all_digaai_data.csv")
     .await(dataReady);
 
 //#endregion
@@ -379,6 +379,7 @@ function dataPreprocess(data) {
             }                 
         }
     }
+    
     return data;
 }
 
@@ -386,6 +387,8 @@ function dataPreprocess(data) {
 function getGroup(data, group, changeFeature = false) {
     start = 0;
     end = 0;
+    let specialFeature = false;
+
     switch(group) {
         case "population": start = 0; end = 1;
             break;
@@ -417,12 +420,44 @@ function getGroup(data, group, changeFeature = false) {
             break;
         case "business": start = 62; end = 64;
             break;
+        case "occupied housing units": start = 64; end = 65;
+            break;
+        case "total number of families": start = 65; end = 66;
+            break;
+        case "families in poverty": start = 66; end = 67;
+            break;
+        case "owner occupied units": start = 67; end = 68;
+            break;
+        case "monthly ownership costs": start = 69; end = 75;
+            break;
+        case "gross rent": start = 76; end = 79;
+            break;
+        case "household income": start = 79; end = 80;
+            break;
+        case "family income": start = 80; end = 81;
+            break;
+        case "none owners vs business owners": start = 81; end = 83;
+            break;
+        case "self employed in incorporated": start = 82; end = 84;
+            break;
+        case "self employed in unincorporated": start = 84; end = 85; specialFeature = true;
+            break;
         default:
             break;
     }
+
     if(changeFeature) {
         currFeature = d3.min([d3.max([start, currFeature]), end - 1]);
     }
+
+    if(specialFeature) {
+        let fingle = data.slice(82,83); 
+        data.slice(84,85).forEach(function(i) {
+            fingle.push(i)
+        });
+        return fingle;
+    }
+
     return data.slice(start, end);
 }
 
@@ -525,7 +560,7 @@ function toDisplayCase(str) {
 function rowSum(data) {
     s = 0;
     for(let k in data) {
-        if(k) {
+        if(k && k !== "percentage") {
             v = data[k];
             s = s+v/5;
         }
