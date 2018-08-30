@@ -56,6 +56,17 @@
                     <a class="dropdown-item" href="#" onclick='setFeature("employment by occupation", "Employment by Occupation")'>Employment by Occupation</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("income", "Yearly Income")'>Yearly Income</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("business", "Business Owners")'>Business Owners</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("occupied housing units", "Occupied Housing Units")'>Occupied Housing Units</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("total number of families", "Total Number of Families")'>Total Number of Families</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("families in poverty", "Families in Poverty")'>Families in Poverty</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("owner occupied units", "Owner Occupied Units")'>Owner Occupied Units</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("monthly ownership costs", "Monthly Ownership Costs")'>Monthly Ownership Costs</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("gross rent", "Gross Rent")'>Gross Rent</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("household income", "Household Income")'>Household Income</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("family income", "Family Income")'>Family Income</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("none owners vs business owners", "Brazilian Immigrants vs Brazilian Immigrant Business Owners")'>Brazilian Immigrants vs Brazilian Immigrant Business Owners</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("self employed in incorporated", "Self-employed in Incorporated Businesses")'>Self-employed in Incorporated Businesses</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("self employed in unincorporated", "Self-employed in Unincorporated Businesses")'>Self-employed in Unincorporated Businesses</a>
                   </div>
                 </div>
               </div>
