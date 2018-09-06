@@ -65,7 +65,8 @@ const MapTooltipDataType = Object.freeze({
 //#region Initialize Data
 
 let mapData = null,
-    chartData = null;
+    csvData = null,
+    graphData;
 
 let currFeature = 0,
     lockedState = "25",
@@ -85,7 +86,7 @@ let mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%"),
 let mapTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0])
-                // .html(d => chartData[currFeature][""] + " : " + numberWithComma(chartData[currFeature][d.id])),
+                // .html(d => csvData[currFeature][""] + " : " + numberWithComma(csvData[currFeature][d.id])),
                 .html(d => d),
     barTip = d3.tip()
                 .attr("class", "tip")
@@ -117,13 +118,13 @@ function showMap(map, mapPath, mapTooltip = MapTooltipDataType.WHOLE) {
     let mapColor = null;
 
     color = d3.scaleLinear()
-                .domain([0, rowSum(chartData[currFeature])])
+                .domain([0, rowSum(csvData[currFeature])])
                 .range(['#c6dbef', '#2d0894']);
     mapColor = (d) => { 
         if (d.id === lockedState)
             return "orange";
         else
-            return color(chartData[currFeature][d.id])
+            return color(csvData[currFeature][d.id])
     };
 
     mapTooltipDataTypeState = mapTooltip;
@@ -146,7 +147,7 @@ function showMap(map, mapPath, mapTooltip = MapTooltipDataType.WHOLE) {
             .attr("d", mapPath);
 
     lastStateRef = map.select("#state" + lockedState.toString());
-    lastStateHighlightColor = color(chartData[currFeature][lockedState]);
+    lastStateHighlightColor = color(csvData[currFeature][lockedState]);
 }
 
 // Load the bar chart
@@ -178,11 +179,10 @@ function showBarChart(barChart) {
     // Clean last output
     barChart.select("g").remove();
 
-    let data = getGroup(chartData, currGroup);
     let x = d3.scaleBand().rangeRound([0, barWidth]).padding(0.1);
     let y = d3.scaleLinear().rangeRound([barHeight, 0]);
-    x.domain(data.map(d => d[""]));
-    y.domain([0, columnMax(data, currState)]);
+    x.domain(graphData.map(d => d[""]));
+    y.domain([0, columnMax(graphData, currState)]);
 
     let barColor = d3.scaleOrdinal(d3.schemeCategory20c);
 
@@ -210,7 +210,7 @@ function showBarChart(barChart) {
         .text("Frequency");
 
     g.selectAll(".bar")
-        .data(data)
+        .data(graphData)
         .enter()
         .append("rect")
         .attr("class", "bar")
@@ -224,8 +224,8 @@ function showBarChart(barChart) {
         .on("mouseout", barTip.hide);
 
     //Set display values in Bar Chart section
-    document.getElementById("dataCategory").innerHTML = chartData[currFeature][""].toUpperCase();
-    document.getElementById("dataValue").innerHTML = numberWithComma(+chartData[currFeature][currState]);
+    document.getElementById("dataCategory").innerHTML = csvData[currFeature][""].toUpperCase();
+    document.getElementById("dataValue").innerHTML = numberWithComma(+csvData[currFeature][currState]);
 }
 
 // Load the pie chart
@@ -257,24 +257,8 @@ function showPieChart(pieChart) {
     // Clean last output
     pieChart.selectAll("g").remove();
     
-    data = getGroup(chartData, currGroup);
-    
     g = pieChart.append("g").attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")"),
     pieColor = d3.scaleOrdinal(d3.schemeCategory20c);
-
-    let tots = d3.sum(data, function(d) { 
-            return d[currState]; 
-        });
-
-    // God have mercy on my soul.
-    // I'm so, so sorry for this.
-    data.forEach(function(d) {
-        d.percentage = d[currState]  / tots;
-        d.percentage = Math.round((d.percentage * 100));
-        d.percentage = d.percentage + "%";
-    });
-
-    console.log('pie data', data);
 
     pie = d3.pie()
             .sort(null)
@@ -286,7 +270,7 @@ function showPieChart(pieChart) {
 
 
     arc = g.selectAll(".arc")
-                .data(pie(data))
+                .data(pie(graphData))
                 .enter().append("g")
                 .attr("class", "arc");
 
@@ -297,9 +281,9 @@ function showPieChart(pieChart) {
         .on("mouseover", pieTip.show)
         .on("mouseout", pieTip.hide);
 
-    wid = data.length * 12;
+    wid = graphData.length * 12;
         x = d3.scaleBand().rangeRound([0, wid]).padding(0.1);
-        x.domain(data.map(d => d[""]));
+        x.domain(graphData.map(d => d[""]));
 
     /* Draw Keys and Data Labels */
     // if (data.length > 5) {
@@ -364,17 +348,26 @@ function showPieChart(pieChart) {
 }
 
 function setFeature(currGroupVal, currGroupNameVal) {
+    //i think here we should update graphData by recalling getGroup(csvData, currGroup)
     document.getElementById("displayedCategory").innerHTML = toDisplayCase(currGroupVal);
     document.getElementById("dropdownMenuButton").innerHTML = currGroupNameVal.toUpperCase();
     currGroup = currGroupVal;
-    getGroup(chartData, currGroupVal, true);
+    graphData = getGroup(csvData, currGroup, true);
+    let tots = d3.sum(graphData, function(d) { 
+        return d[currState]; 
+    });
+    graphData.forEach(function(d) {
+        d.percentage = d[currState]  / tots;
+        d.percentage = Math.round((d.percentage * 100));
+        d.percentage = d.percentage + "%";
+    });
     showMap(mapSvg, mapSvgPath);
     redrawDataHandler();
 }   
 
 // Get state color as a percentage of the whole
 function stateMapColor(d) {
-    c = chartData[currFeature][d.id]
+    c = csvData[currFeature][d.id]
     return mapColor(c);
 }
 
@@ -386,7 +379,7 @@ function stateMapColor(d) {
 function dataReady(error, us, data) {
     if (error) throw error;
     mapData = us;
-    chartData = dataPreprocess(data);
+    csvData = dataPreprocess(data);
     setFeature(currGroup, currGroupName);
 }
 
@@ -410,8 +403,6 @@ function getGroup(data, group, changeFeature = false) {
     start = 0;
     end = 0;
     let specialFeature = false;
-
-    //consolidate getGroup to use capialized name of feature so we can remove the 2 params in setFeature
 
     switch(group) {
         case "population": start = 0; end = 1;
@@ -504,22 +495,23 @@ function redrawDataHandler() {
 window.addEventListener("resize", redrawDataHandler);
 
 function mouseOverMapHandler(d, i) {
-    // console.log('mouseOverMap');
-    console.log('d', d.id);
-    //console.log('i', i);
-    // mapTip.show(d, i);
     let toolTipMessage;
     switch (mapTooltipDataTypeState) {
-        case MapTooltipDataType.WHOLE: 
-            toolTipMessage = chartData[currFeature][""] + " : " + numberWithComma(chartData[currFeature][d.id]);
-            break;
-        case MapTooltipDataType.PERCENTAGE:
-            let dataTest = getGroup(chartData, currGroup);
-            console.log(dataTest);
-            toolTipMessage = "Percentage";
-            break;
+        // case MapTooltipDataType.WHOLE: 
+        //     toolTipMessage = csvData[currFeature][""] + " : " + numberWithComma(csvData[currFeature][d.id]);
+        //     break;
+        // case MapTooltipDataType.PERCENTAGE:
+        //     console.log('csvData', csvData);
+        //     console.log('graphData', graphData);
+        //     console.log('currFeature', currFeature);
+        //     //Query property based on featureName
+        //     const featureName = csvData[currFeature][""];
+        //     const percentage = graphData.find(d => d[""] === featureName).percentage; //this works but only for the current state because graphData only represents values for the current state, i would need to be able to dynamically pick a state as i hover over
+        //     console.log(percentage);
+        //     toolTipMessage = featureName + " : " + percentage;
+        //     break;
         default:
-            toolTipMessage = "Default";
+            toolTipMessage = csvData[currFeature][""] + " : " + numberWithComma(csvData[currFeature][d.id]);
             break;
     }
     mapTip.show(toolTipMessage, i);
@@ -550,7 +542,7 @@ function clickMapHandler(d, i, mapStates) {
 }
 
 function clickDataPointHandler(d, i) {
-    chartData.forEach((e, i) => {
+    csvData.forEach((e, i) => {
         if(e[""] == d[""]) currFeature = i;
     });
 
@@ -561,7 +553,7 @@ function clickDataPointHandler(d, i) {
 }
 
 function clickPieHandler(d, i) {
-    chartData.forEach((e, i) => {
+    csvData.forEach((e, i) => {
         if(e[""] == d.data[""]) currFeature = i;
     });
 
