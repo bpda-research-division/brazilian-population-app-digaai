@@ -59,34 +59,32 @@ const STATE_MAP_KEYS = {
 
 //#region Initialize Data
 
-let mapData = null;
-let chartData = null;
+let mapData = null,
+    chartData = null;
 
-let currFeature = 0;
-let lockedState = "25";
-let currState = "25";
-let currGroup = "population";
-let currGroupName = "Population";
-let lastStateRef = null;
-let lastStateHighlightColor = null;
+let currFeature = 0,
+    lockedState = "25",
+    currState = "25",
+    currGroup = "population",
+    currGroupName = "Population",
+    lastStateRef = null,
+    lastStateHighlightColor = null;
 
 // Define map and graph svgs with tooltips
-let mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%");
-let mapSvgPath = d3.geoPath();
-let barSvg = d3.select("#bar");
-let pieSvg = d3.select("#pie");
+let mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%"),
+    mapSvgPath = d3.geoPath(),
+    barSvg = d3.select("#bar"),
+    pieSvg = d3.select("#pie");
 
 let mapTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0])
-                .html(d => chartData[currFeature][""] + " : " + chartData[currFeature][d.id]);
-
-let barTip = d3.tip()
+                .html(d => chartData[currFeature][""] + " : " + numberWithComma(chartData[currFeature][d.id])),
+    barTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0])
-                .html(d => d[""] + " : " + d[currState]);
-
-let pieTip = d3.tip()
+                .html(d => d[""] + " : " + numberWithComma(+d[currState])),
+    pieTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0]) 
                 .html(d => d.data[""] + " : " + d.data.percentage); 
@@ -115,7 +113,10 @@ function showMap(map, mapPath) {
                 .domain([0, rowSum(chartData[currFeature])])
                 .range(['#c6dbef', '#2d0894']);
     mapColor = (d) => { 
-        return color(chartData[currFeature][d.id])
+        if (d.id === lockedState)
+            return "orange";
+        else
+            return color(chartData[currFeature][d.id])
     };
 
     map.append("g")
@@ -123,6 +124,7 @@ function showMap(map, mapPath) {
             .selectAll("path")
             .data(topojson.feature(mapData, mapData.objects.states).features)
             .enter().append("path")
+            .attr("id", d => "state" + d.id.toString())
             .attr("fill", d => mapColor(d))
             .attr("d", mapPath)
             .on("mouseover", mouseOverMapHandler)
@@ -133,14 +135,23 @@ function showMap(map, mapPath) {
             .datum(topojson.mesh(mapData, mapData.objects.states, (a, b) => a !== b))
             .attr("class", "states")
             .attr("d", mapPath);
+
+    //initialize last state values if none
+    if (!lastStateRef) {
+        lastStateRef = map.select("#state" + lockedState.toString());
+        lastStateHighlightColor = color(chartData[currFeature][lockedState]);
+    }
 }
 
 // Load the bar chart
 function showBarChart(barChart) {
     //There is probably a better way to handle resizing the chart
-    let chartWidth, chartHeight, barWidth, barHeight;
-    let barMargin = { top: 20, right: 0, bottom: 100, left: 50 }; 
-    let screenWidth = parseInt(document.body.clientWidth);
+    let chartWidth, 
+        chartHeight, 
+        barWidth, 
+        barHeight,
+        barMargin = { top: 20, right: 0, bottom: 100, left: 50 },
+        screenWidth = parseInt(document.body.clientWidth);
     
     if (screenWidth < 768) {
         chartWidth = barChart.attr("sm-width");
@@ -208,14 +219,16 @@ function showBarChart(barChart) {
 
     //Set display values in Bar Chart section
     document.getElementById("dataCategory").innerHTML = chartData[currFeature][""].toUpperCase();
-    document.getElementById("dataValue").innerHTML = numberWithComma(parseInt(chartData[currFeature][currState]));
+    document.getElementById("dataValue").innerHTML = numberWithComma(+chartData[currFeature][currState]);
 }
 
 // Load the pie chart
 function showPieChart(pieChart) {
-    let pieWidth, pieHeight, pieRadius;
-    let pieMargin = { top: 0, right: 0, bottom: 0, left: 0 };
-    let screenWidth = parseInt(document.body.clientWidth);
+    let pieWidth, 
+        pieHeight, 
+        pieRadius,
+        pieMargin = { top: 0, right: 0, bottom: 0, left: 0 },
+        screenWidth = parseInt(document.body.clientWidth);
 
     if (screenWidth < 768) {
         pieWidth = +pieChart.attr("sm-width");
@@ -251,7 +264,7 @@ function showPieChart(pieChart) {
     // I'm so, so sorry for this.
     data.forEach(function(d) {
         d.percentage = d[currState]  / tots;
-        d.percentage = (d.percentage * 100).toFixed(2);
+        d.percentage = Math.round((d.percentage * 100));
         d.percentage = d.percentage + "%";
     });
 
@@ -280,6 +293,7 @@ function showPieChart(pieChart) {
         x = d3.scaleBand().rangeRound([0, wid]).padding(0.1);
         x.domain(data.map(d => d[""]));
 
+    /* Draw Keys and Data Labels */
     // if (data.length > 5) {
     //     barSize = x.bandwidth();
     //     g = g.append("g").attr("transform", "translate(" + -pieWidth / 4 + "," + pieHeight / 2 + ")")
@@ -389,6 +403,8 @@ function getGroup(data, group, changeFeature = false) {
     end = 0;
     let specialFeature = false;
 
+    //consolidate getGroup to use capialized name of feature so we can remove the 2 params in setFeature
+
     switch(group) {
         case "population": start = 0; end = 1;
             break;
@@ -416,6 +432,10 @@ function getGroup(data, group, changeFeature = false) {
             break;
         case "employment by occupation": start = 52; end = 60;
             break;
+        case "population for whom poverty status is determined": start = 58; end = 59;
+            break;
+        case "individuals below poverty": start = 59; end = 60;
+            break;
         case "income": start = 60; end = 62;
             break;
         case "business": start = 62; end = 64;
@@ -430,7 +450,9 @@ function getGroup(data, group, changeFeature = false) {
             break;
         case "monthly ownership costs": start = 69; end = 75;
             break;
-        case "gross rent": start = 76; end = 79;
+        case "gross rent": start = 76; end = 78;
+            break;
+        case "crowding": start = 78; end = 79;
             break;
         case "household income": start = 79; end = 80;
             break;
@@ -486,10 +508,12 @@ function mouseLeaveMapHandler(d, i) {
 }
 
 function clickMapHandler(d, i, mapStates) {
+    
     if(lastStateRef !== null)
         lastStateRef.attr("fill", lastStateHighlightColor);
         
     let currStateRef = d3.select(this);
+    console.log(currStateRef);
     lastStateRef = currStateRef;
     lastStateHighlightColor = lastStateRef.attr("fill");
     currStateRef.attr("fill", "orange");
@@ -506,8 +530,9 @@ function clickDataPointHandler(d, i) {
     });
 
     document.getElementById("dataCategory").innerHTML = d[""].toUpperCase();
-    document.getElementById("dataValue").innerHTML = numberWithComma(parseInt(d[currState]));
+    document.getElementById("dataValue").innerHTML = numberWithComma(+d[currState]);
     showMap(mapSvg, mapSvgPath);
+    document.getElementById("titleContainer").scrollIntoView();
 }
 
 function clickPieHandler(d, i) {
@@ -518,6 +543,7 @@ function clickPieHandler(d, i) {
     document.getElementById("dataCategory").innerHTML = d.data[""].toUpperCase();
     document.getElementById("dataValue").innerHTML = d.data["percentage"];
     showMap(mapSvg, mapSvgPath);
+    document.getElementById("titleContainer").scrollIntoView();
 }
 
 //#endregion
