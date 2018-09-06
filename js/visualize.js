@@ -57,6 +57,11 @@ const STATE_MAP_KEYS = {
     "56": "WYOMING"
 };
 
+const MapTooltipDataType = Object.freeze({
+    WHOLE: Symbol('whole'),
+    PERCENTAGE: Symbol('percentage')
+});
+
 //#region Initialize Data
 
 let mapData = null,
@@ -68,7 +73,8 @@ let currFeature = 0,
     currGroup = "population",
     currGroupName = "Population",
     lastStateRef = null,
-    lastStateHighlightColor = null;
+    lastStateHighlightColor = null,
+    mapTooltipDataTypeState = MapTooltipDataType.WHOLE;
 
 // Define map and graph svgs with tooltips
 let mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%"),
@@ -79,7 +85,8 @@ let mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%"),
 let mapTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0])
-                .html(d => chartData[currFeature][""] + " : " + numberWithComma(chartData[currFeature][d.id])),
+                // .html(d => chartData[currFeature][""] + " : " + numberWithComma(chartData[currFeature][d.id])),
+                .html(d => d),
     barTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0])
@@ -104,7 +111,7 @@ d3.queue()
 //#region Data Visualize Methods
 
 // Load the map
-function showMap(map, mapPath) {
+function showMap(map, mapPath, mapTooltip = MapTooltipDataType.WHOLE) {
     map.selectAll("g").remove();
     map.selectAll("path").remove();
     let mapColor = null;
@@ -118,6 +125,8 @@ function showMap(map, mapPath) {
         else
             return color(chartData[currFeature][d.id])
     };
+
+    mapTooltipDataTypeState = mapTooltip;
 
     map.append("g")
             .attr("class", "state-inner")
@@ -136,11 +145,8 @@ function showMap(map, mapPath) {
             .attr("class", "states")
             .attr("d", mapPath);
 
-    //initialize last state values if none
-    if (!lastStateRef) {
-        lastStateRef = map.select("#state" + lockedState.toString());
-        lastStateHighlightColor = color(chartData[currFeature][lockedState]);
-    }
+    lastStateRef = map.select("#state" + lockedState.toString());
+    lastStateHighlightColor = color(chartData[currFeature][lockedState]);
 }
 
 // Load the bar chart
@@ -267,6 +273,8 @@ function showPieChart(pieChart) {
         d.percentage = Math.round((d.percentage * 100));
         d.percentage = d.percentage + "%";
     });
+
+    console.log('pie data', data);
 
     pie = d3.pie()
             .sort(null)
@@ -496,7 +504,25 @@ function redrawDataHandler() {
 window.addEventListener("resize", redrawDataHandler);
 
 function mouseOverMapHandler(d, i) {
-    mapTip.show(d, i);
+    // console.log('mouseOverMap');
+    console.log('d', d.id);
+    //console.log('i', i);
+    // mapTip.show(d, i);
+    let toolTipMessage;
+    switch (mapTooltipDataTypeState) {
+        case MapTooltipDataType.WHOLE: 
+            toolTipMessage = chartData[currFeature][""] + " : " + numberWithComma(chartData[currFeature][d.id]);
+            break;
+        case MapTooltipDataType.PERCENTAGE:
+            let dataTest = getGroup(chartData, currGroup);
+            console.log(dataTest);
+            toolTipMessage = "Percentage";
+            break;
+        default:
+            toolTipMessage = "Default";
+            break;
+    }
+    mapTip.show(toolTipMessage, i);
     currState = d.id;
     redrawDataHandler();
 }
@@ -509,11 +535,10 @@ function mouseLeaveMapHandler(d, i) {
 
 function clickMapHandler(d, i, mapStates) {
     
-    if(lastStateRef !== null)
+    if(lastStateRef !== null) 
         lastStateRef.attr("fill", lastStateHighlightColor);
         
     let currStateRef = d3.select(this);
-    console.log(currStateRef);
     lastStateRef = currStateRef;
     lastStateHighlightColor = lastStateRef.attr("fill");
     currStateRef.attr("fill", "orange");
@@ -531,7 +556,7 @@ function clickDataPointHandler(d, i) {
 
     document.getElementById("dataCategory").innerHTML = d[""].toUpperCase();
     document.getElementById("dataValue").innerHTML = numberWithComma(+d[currState]);
-    showMap(mapSvg, mapSvgPath);
+    showMap(mapSvg, mapSvgPath, MapTooltipDataType.WHOLE);
     document.getElementById("titleContainer").scrollIntoView();
 }
 
@@ -542,7 +567,7 @@ function clickPieHandler(d, i) {
 
     document.getElementById("dataCategory").innerHTML = d.data[""].toUpperCase();
     document.getElementById("dataValue").innerHTML = d.data["percentage"];
-    showMap(mapSvg, mapSvgPath);
+    showMap(mapSvg, mapSvgPath, MapTooltipDataType.PERCENTAGE);
     document.getElementById("titleContainer").scrollIntoView();
 }
 
