@@ -57,6 +57,38 @@ const STATE_MAP_KEYS = {
     "56": "WYOMING"
 };
 
+const dataCategories = [
+    "population",
+    "age detail",
+    "age summary",
+    "gender",
+    "marriage",
+    "citizen",
+    "enter time",
+    "education",
+    "civilian labor force",
+    "unemployed",
+    "employment type",
+    "employment by industry",
+    "employment by occupation",
+    "population for whom poverty status is determined",
+    "individuals below poverty",
+    "income",
+    "business",
+    "occupied housing units",
+    "total number of families",
+    "families in poverty",
+    "owner occupied units",
+    "monthly ownership costs",
+    "gross rent",
+    "crowding",
+    "household income",
+    "family income",
+    "none owners vs business owners",
+    "self employed in incorporated",
+    "self employed in unincorporated"
+];
+
 const MapTooltipDataType = Object.freeze({
     WHOLE: Symbol('whole'),
     PERCENTAGE: Symbol('percentage')
@@ -66,7 +98,8 @@ const MapTooltipDataType = Object.freeze({
 
 let mapData = null,
     csvData = null,
-    graphData;
+    formattedData = null,
+    graphData = null;
 
 let currFeature = 0,
     lockedState = "25",
@@ -91,11 +124,11 @@ let mapTip = d3.tip()
     barTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0])
-                .html(d => d[""] + " : " + numberWithComma(+d[currState])),
+                .html(d => d[""] + " : " + numberWithComma(+d[currState].value)),
     pieTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0]) 
-                .html(d => d.data[""] + " : " + d.data.percentage); 
+                .html(d => d.data[""] + " : " + d.data[currState].percentage); //come back here and with new formatted data
 
 mapSvg.call(mapTip);
 barSvg.call(barTip);
@@ -120,11 +153,11 @@ function showMap(map, mapPath, mapTooltip = MapTooltipDataType.WHOLE) {
     color = d3.scaleLinear()
                 .domain([0, rowSum(csvData[currFeature])])
                 .range(['#c6dbef', '#2d0894']);
-    mapColor = (d) => { 
+    mapColor = (d) => {
         if (d.id === lockedState)
             return "orange";
         else
-            return color(csvData[currFeature][d.id])
+            return color(csvData[currFeature][d.id].value);
     };
 
     mapTooltipDataTypeState = mapTooltip;
@@ -147,7 +180,7 @@ function showMap(map, mapPath, mapTooltip = MapTooltipDataType.WHOLE) {
             .attr("d", mapPath);
 
     lastStateRef = map.select("#state" + lockedState.toString());
-    lastStateHighlightColor = color(csvData[currFeature][lockedState]);
+    lastStateHighlightColor = color(csvData[currFeature][lockedState].value);
 }
 
 // Load the bar chart
@@ -215,17 +248,19 @@ function showBarChart(barChart) {
         .append("rect")
         .attr("class", "bar")
         .attr("x", d => x(d[""]))
-        .attr("y", d => y(d[currState]))
+        .attr("y", d => y(d[currState].value))
         .attr("width", x.bandwidth())
-        .attr("height", d => barHeight - y(d[currState]))
+        .attr("height", d => barHeight - y(d[currState].value))
         // .attr("fill", d => barColor(d[""])) //to enable comment out css .bar fill color
         .on("click", clickDataPointHandler)
         .on("mouseover", barTip.show)
         .on("mouseout", barTip.hide);
 
     //Set display values in Bar Chart section
-    document.getElementById("dataCategory").innerHTML = csvData[currFeature][""].toUpperCase();
-    document.getElementById("dataValue").innerHTML = numberWithComma(+csvData[currFeature][currState]);
+    if (mapTooltipDataTypeState === MapTooltipDataType.WHOLE) {
+        document.getElementById("dataCategory").innerHTML = csvData[currFeature][""].toUpperCase();
+        document.getElementById("dataValue").innerHTML = numberWithComma(+csvData[currFeature][currState].value); 
+    }
 }
 
 // Load the pie chart
@@ -262,7 +297,7 @@ function showPieChart(pieChart) {
 
     pie = d3.pie()
             .sort(null)
-            .value(d => d[currState]);
+            .value(d => d[currState].value);
     
     piePath = d3.arc()
                 .outerRadius(pieRadius - 10)
@@ -285,66 +320,10 @@ function showPieChart(pieChart) {
         x = d3.scaleBand().rangeRound([0, wid]).padding(0.1);
         x.domain(graphData.map(d => d[""]));
 
-    /* Draw Keys and Data Labels */
-    // if (data.length > 5) {
-    //     barSize = x.bandwidth();
-    //     g = g.append("g").attr("transform", "translate(" + -pieWidth / 4 + "," + pieHeight / 2 + ")")
-    //     g.selectAll(".bar")
-    //         .data(data)
-    //         .enter().append("rect")
-    //         .attr("x", d => x(d[""]))
-    //         .attr("y", 6)
-    //         .attr("width", barSize)
-    //         .attr("height", barSize)
-    //         .attr("fill", d => pieColor(d[""]));
-        
-    //     g.append("g")
-    //         .attr("class", "pie-axis")
-    //         .call(d3.axisBottom(x))
-    //         .selectAll("text")
-    //         .attr("y", -barSize / 2)
-    //         .attr("x", 10 + barSize)
-    //         .attr("transform", "rotate(90)")
-    //         .style("text-anchor", "start");
-    // } else {
-    //     arc.append("text")
-    //         .attr("class", "pie-label")
-    //         .attr("text-anchor", "middle")
-    //         .attr("x", d => {
-    //             let a = d.startAngle + (d.endAngle - d.startAngle)/2 - Math.PI/2;
-    //             d.cx = Math.cos(a) * (pieRadius - 45);
-    //             return d.x = Math.cos(a) * (pieRadius + 30);
-    //         })
-    //         .attr("y", d => {
-    //             let a = d.startAngle + (d.endAngle - d.startAngle)/2 - Math.PI/2;
-    //             d.cy = Math.sin(a) * (pieRadius - 45);
-    //             return d.y = Math.sin(a) * (pieRadius + 30);
-    //         })
-    //         .text(d => {
-    //             // console.log(d);
-    //             return d.data.percentage;
-    //         })
-    //         .each((d,i, element) => {
-    //             let bbox = element[i].getBBox();
-    //             d.sx = d.x - bbox.width/2 - 2;
-    //             d.ox = d.x + bbox.width/2 + 2;
-    //             d.sy = d.oy = d.y + 5;
-    //         });
-
-    //     arc.append("path")
-    //         .attr("class", "pointer")
-    //         .style("fill", "none")
-    //         .style("stroke", "white")
-    //         .attr("d", d => {
-    //             if(d.cx > d.ox) {
-    //                 return "M" + d.sx + "," + d.sy + "L" + d.ox + "," + d.oy + " " + d.cx + "," + d.cy;
-    //             } else {
-    //                 return "M" + d.ox + "," + d.oy + "L" + d.sx + "," + d.sy + " " + d.cx + "," + d.cy;
-    //             }
-    //         });
-    // }
-
-    document.getElementById("stateHeader").innerHTML = mapToState(currState);
+    if (mapTooltipDataTypeState === MapTooltipDataType.PERCENTAGE) {
+        document.getElementById("dataCategory").innerHTML = csvData[currFeature][""].toUpperCase();
+        document.getElementById("dataValue").innerHTML = csvData[currFeature][currState].percentage; 
+    }
 }
 
 function setFeature(currGroupVal, currGroupNameVal) {
@@ -353,21 +332,14 @@ function setFeature(currGroupVal, currGroupNameVal) {
     document.getElementById("dropdownMenuButton").innerHTML = currGroupNameVal.toUpperCase();
     currGroup = currGroupVal;
     graphData = getGroup(csvData, currGroup, true);
-    let tots = d3.sum(graphData, function(d) { 
-        return d[currState]; 
-    });
-    graphData.forEach(function(d) {
-        d.percentage = d[currState]  / tots;
-        d.percentage = Math.round((d.percentage * 100));
-        d.percentage = d.percentage + "%";
-    });
+    console.log('graphData for ' + currGroupVal, graphData);
     showMap(mapSvg, mapSvgPath);
     redrawDataHandler();
 }   
 
 // Get state color as a percentage of the whole
 function stateMapColor(d) {
-    c = csvData[currFeature][d.id]
+    c = csvData[currFeature][d.id].value;
     return mapColor(c);
 }
 
@@ -394,8 +366,49 @@ function dataPreprocess(data) {
             }                 
         }
     }
-    
+    formatData(data);
     return data;
+}
+
+// Calculates the value and % of data
+function formatData(data) {
+    let currentGroups, 
+        stateGroupTotal,
+        tempVal,
+        tempPercentage;
+
+    for (let i = 0; i < dataCategories.length; i++) {
+        //for each category, get the collective groups for example:
+        //for "age summary" category, grab data on "0 to 20," "21 to 34," etc.
+        currentGroups = getGroup(data, dataCategories[i], false);
+        for (let state in STATE_MAP_KEYS) {
+            //for each state calculate the total sum of values per group 
+            //due to some overlapping in data, some values may have already been calculated, so we must 
+            //consider using their 'value' property in this sum
+            if (dataCategories[i] === 'self employed in unincorporated') {
+                console.log('self employed in unincorporated', currentGroups);
+            }
+            stateGroupTotal = d3.sum(currentGroups, d => {
+                return isFormattedData(d[state]) ? d[state].value : d[state];
+            });
+            for (let groupIndex = 0; groupIndex < currentGroups.length; groupIndex++) {
+                if (isFormattedData(currentGroups[groupIndex][state])) continue;
+                //for each state, calculate the percentage a particular group is to the sum of all the related groups within the category
+                tempVal = currentGroups[groupIndex][state];
+                tempPercentage = Math.round((tempVal / stateGroupTotal) * 100);
+                tempPercentage = (isNaN(tempPercentage) ? 0 : tempPercentage) + "%";
+                
+                currentGroups[groupIndex][state] = {
+                    value: tempVal,
+                    percentage: tempPercentage
+                };
+            }
+        }
+    }
+}
+
+function isFormattedData(data) {
+    return typeof data === "object" && data.hasOwnProperty('value') && data.hasOwnProperty('percentage');
 }
 
 // Get the correct rows from all data for these features
@@ -429,7 +442,7 @@ function getGroup(data, group, changeFeature = false) {
             break;
         case "employment by industry": start = 45; end = 52;
             break;
-        case "employment by occupation": start = 52; end = 60;
+        case "employment by occupation": start = 52; end = 58; //here in lies the issue
             break;
         case "population for whom poverty status is determined": start = 58; end = 59;
             break;
@@ -457,9 +470,9 @@ function getGroup(data, group, changeFeature = false) {
             break;
         case "family income": start = 80; end = 81;
             break;
-        case "none owners vs business owners": start = 81; end = 83;
+        case "none owners vs business owners": start = 81; end = 83; 
             break;
-        case "self employed in incorporated": start = 82; end = 84;
+        case "self employed in incorporated": start = 82; end = 84; //this overlap causes some issues in the formatData method 
             break;
         case "self employed in unincorporated": start = 84; end = 85; specialFeature = true;
             break;
@@ -471,12 +484,14 @@ function getGroup(data, group, changeFeature = false) {
         currFeature = d3.min([d3.max([start, currFeature]), end - 1]);
     }
 
+    //Self Employed in Unincorporated needs data on # of Brazilian Business Owners
     if(specialFeature) {
-        let fingle = data.slice(82,83); 
-        data.slice(84,85).forEach(function(i) {
-            fingle.push(i)
-        });
-        return fingle;
+        let brazilianBusinessOwnerData = data.slice(82,83); 
+        let selfEmployedInUnincorporatedData = data.slice(84,85);
+        
+        //Add the row of # Brazilian Business Owners to row or Self Employed in Unincorporated 
+        selfEmployedInUnincorporatedData.forEach(d => brazilianBusinessOwnerData.push(d));
+        return brazilianBusinessOwnerData;
     }
 
     return data.slice(start, end);
@@ -489,6 +504,7 @@ function getGroup(data, group, changeFeature = false) {
 // Add resize listener to redraw data charts  
 function redrawDataHandler() {
     document.getElementById("displayedState").innerHTML = mapToState(currState);
+    document.getElementById("stateHeader").innerHTML = mapToState(currState);
     showBarChart(barSvg);
     showPieChart(pieSvg);
 }
@@ -497,21 +513,14 @@ window.addEventListener("resize", redrawDataHandler);
 function mouseOverMapHandler(d, i) {
     let toolTipMessage;
     switch (mapTooltipDataTypeState) {
-        // case MapTooltipDataType.WHOLE: 
-        //     toolTipMessage = csvData[currFeature][""] + " : " + numberWithComma(csvData[currFeature][d.id]);
-        //     break;
-        // case MapTooltipDataType.PERCENTAGE:
-        //     console.log('csvData', csvData);
-        //     console.log('graphData', graphData);
-        //     console.log('currFeature', currFeature);
-        //     //Query property based on featureName
-        //     const featureName = csvData[currFeature][""];
-        //     const percentage = graphData.find(d => d[""] === featureName).percentage; //this works but only for the current state because graphData only represents values for the current state, i would need to be able to dynamically pick a state as i hover over
-        //     console.log(percentage);
-        //     toolTipMessage = featureName + " : " + percentage;
-        //     break;
+        case MapTooltipDataType.WHOLE: 
+            toolTipMessage = csvData[currFeature][""] + " : " + numberWithComma(csvData[currFeature][d.id].value);
+            break;
+        case MapTooltipDataType.PERCENTAGE:
+            toolTipMessage = csvData[currFeature][""] + " : " + csvData[currFeature][d.id].percentage;
+            break;
         default:
-            toolTipMessage = csvData[currFeature][""] + " : " + numberWithComma(csvData[currFeature][d.id]);
+            toolTipMessage = csvData[currFeature][""] + " : " + numberWithComma(csvData[currFeature][d.id].value);
             break;
     }
     mapTip.show(toolTipMessage, i);
@@ -547,7 +556,7 @@ function clickDataPointHandler(d, i) {
     });
 
     document.getElementById("dataCategory").innerHTML = d[""].toUpperCase();
-    document.getElementById("dataValue").innerHTML = numberWithComma(+d[currState]);
+    document.getElementById("dataValue").innerHTML = numberWithComma(+d[currState].value);
     showMap(mapSvg, mapSvgPath, MapTooltipDataType.WHOLE);
     document.getElementById("titleContainer").scrollIntoView();
 }
@@ -558,7 +567,7 @@ function clickPieHandler(d, i) {
     });
 
     document.getElementById("dataCategory").innerHTML = d.data[""].toUpperCase();
-    document.getElementById("dataValue").innerHTML = d.data["percentage"];
+    document.getElementById("dataValue").innerHTML = d.data[currState].percentage;
     showMap(mapSvg, mapSvgPath, MapTooltipDataType.PERCENTAGE);
     document.getElementById("titleContainer").scrollIntoView();
 }
@@ -601,20 +610,24 @@ function toDisplayCase(str) {
 }
 
 function rowSum(data) {
-    s = 0;
-    for(let k in data) {
-        if(k && k !== "percentage") {
-            v = data[k];
-            s = s+v/5;
+    let sum = 0,
+        value= 0;
+
+    for(let key in data) {
+        //for some reason 11 in the csv data does not correspond to any state
+        if(key && key !== "11") {
+            value = data[key].value;
+            sum = sum + value/5;
         }
     }
-    return s;
+    
+    return sum;
 }
 
 function columnMax(group, state) {
     m = -Infinity;
     for(i = 0; i < group.length; ++i) {
-        v = group[i][state];
+        v = group[i][state].value; //here
         if(m < v) m = v;
     }
     return m;
