@@ -383,16 +383,8 @@ function formatData(data) {
         currentGroups = getGroup(data, dataCategories[i], false);
         for (let state in STATE_MAP_KEYS) {
             //for each state calculate the total sum of values per group 
-            //due to some overlapping in data, some values may have already been calculated, so we must 
-            //consider using their 'value' property in this sum
-            if (dataCategories[i] === 'self employed in unincorporated') {
-                console.log('self employed in unincorporated', currentGroups);
-            }
-            stateGroupTotal = d3.sum(currentGroups, d => {
-                return isFormattedData(d[state]) ? d[state].value : d[state];
-            });
+            stateGroupTotal = d3.sum(currentGroups, d => d[state]);
             for (let groupIndex = 0; groupIndex < currentGroups.length; groupIndex++) {
-                if (isFormattedData(currentGroups[groupIndex][state])) continue;
                 //for each state, calculate the percentage a particular group is to the sum of all the related groups within the category
                 tempVal = currentGroups[groupIndex][state];
                 tempPercentage = Math.round((tempVal / stateGroupTotal) * 100);
@@ -407,15 +399,10 @@ function formatData(data) {
     }
 }
 
-function isFormattedData(data) {
-    return typeof data === "object" && data.hasOwnProperty('value') && data.hasOwnProperty('percentage');
-}
-
 // Get the correct rows from all data for these features
 function getGroup(data, group, changeFeature = false) {
     start = 0;
     end = 0;
-    let specialFeature = false;
 
     switch(group) {
         case "population": start = 0; end = 1;
@@ -442,7 +429,7 @@ function getGroup(data, group, changeFeature = false) {
             break;
         case "employment by industry": start = 45; end = 52;
             break;
-        case "employment by occupation": start = 52; end = 58; //here in lies the issue
+        case "employment by occupation": start = 52; end = 58; 
             break;
         case "population for whom poverty status is determined": start = 58; end = 59;
             break;
@@ -472,9 +459,9 @@ function getGroup(data, group, changeFeature = false) {
             break;
         case "none owners vs business owners": start = 81; end = 83; 
             break;
-        case "self employed in incorporated": start = 82; end = 84; //this overlap causes some issues in the formatData method 
+        case "self employed in incorporated": start = 83; end = 85;
             break;
-        case "self employed in unincorporated": start = 84; end = 85; specialFeature = true;
+        case "self employed in unincorporated": start = 85; end = 87;
             break;
         default:
             break;
@@ -482,16 +469,6 @@ function getGroup(data, group, changeFeature = false) {
 
     if(changeFeature) {
         currFeature = d3.min([d3.max([start, currFeature]), end - 1]);
-    }
-
-    //Self Employed in Unincorporated needs data on # of Brazilian Business Owners
-    if(specialFeature) {
-        let brazilianBusinessOwnerData = data.slice(82,83); 
-        let selfEmployedInUnincorporatedData = data.slice(84,85);
-        
-        //Add the row of # Brazilian Business Owners to row or Self Employed in Unincorporated 
-        selfEmployedInUnincorporatedData.forEach(d => brazilianBusinessOwnerData.push(d));
-        return brazilianBusinessOwnerData;
     }
 
     return data.slice(start, end);
