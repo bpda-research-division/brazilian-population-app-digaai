@@ -1,6 +1,6 @@
 /*
  * Filename: visualize.js
- * Authors: Dharmesh Tarapore <dharmesh@cs.bu.edu> and Aaron Elliot
+ * Authors: Dharmesh Tarapore <dharmesh@cs.bu.edu>, Aaron Elliot, and Brian Tan <brian.lin.tan@gmail.com>
  * Description: Visualizing ACS estimates.
  */
 
@@ -57,36 +57,36 @@ const STATE_MAP_KEYS = {
     "56": "WYOMING"
 };
 
-const dataCategories = [
-    "population",
-    "age detail",
-    "age summary",
-    "gender",
-    "marriage",
-    "citizen",
-    "enter time",
-    "education",
-    "civilian labor force",
-    "unemployed",
-    "employment type",
-    "employment by industry",
-    "employment by occupation",
-    "population for whom poverty status is determined",
-    "individuals below poverty",
-    "income",
-    "business",
-    "occupied housing units",
-    "total number of families",
-    "families in poverty",
-    "owner occupied units",
-    "monthly ownership costs",
-    "gross rent",
-    "crowding",
-    "household income",
-    "family income",
-    "none owners vs business owners",
-    "self employed in incorporated",
-    "self employed in unincorporated"
+const dataCategoryConfigs = [
+    { name: "population", isMonetaryValue: false, requiresPieChart: false },
+    { name: "age detail", isMonetaryValue: false, requiresPieChart: true },
+    { name: "age summary", isMonetaryValue: false, requiresPieChart: true },
+    { name: "gender", isMonetaryValue: false, requiresPieChart: true },
+    { name: "marriage", isMonetaryValue: false, requiresPieChart: true },
+    { name: "citizen", isMonetaryValue: false, requiresPieChart: true },
+    { name: "enter time", isMonetaryValue: false, requiresPieChart: true},
+    { name: "education", isMonetaryValue: false, requiresPieChart: true },
+    { name: "civilian labor force", isMonetaryValue: false, requiresPieChart: true },
+    { name: "unemployed", isMonetaryValue: false, requiresPieChart: true },
+    { name: "employment type", isMonetaryValue: false, requiresPieChart: true },
+    { name: "employment by industry", isMonetaryValue: false, requiresPieChart: true },
+    { name: "employment by occupation", isMonetaryValue: false, requiresPieChart: true },
+    { name: "population for whom poverty status is determined", isMonetaryValue: false, requiresPieChart: true },
+    { name: "individuals below poverty", isMonetaryValue: false, requiresPieChart: true },
+    { name: "income", isMonetaryValue: true, requiresPieChart: true },
+    { name: "business", isMonetaryValue: false, requiresPieChart: true },
+    { name: "occupied housing units", isMonetaryValue: false, requiresPieChart: false},
+    { name: "total number of families", isMonetaryValue: false, requiresPieChart: false},
+    { name: "families in poverty", isMonetaryValue: false, requiresPieChart: false},
+    { name: "owner occupied units", isMonetaryValue: false, requiresPieChart: false },
+    { name: "monthly ownership costs", isMonetaryValue: false, requiresPieChart: true },
+    { name: "gross rent", isMonetaryValue: true, requiresPieChart: true },
+    { name: "crowding", isMonetaryValue: false, requiresPieChart: false },
+    { name: "household income",isMonetaryValue: true, requiresPieChart: false},
+    { name: "family income", isMonetaryValue: true, requiresPieChart: false},
+    { name: "none owners vs business owners", isMonetaryValue: false, requiresPieChart: true},
+    { name: "self employed in incorporated", isMonetaryValue: false, requiresPieChart: true },
+    { name: "self employed in unincorporated", isMonetaryValue: false, requiresPieChart: true }
 ];
 
 const MapTooltipDataType = Object.freeze({
@@ -124,7 +124,7 @@ let mapTip = d3.tip()
     barTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0])
-                .html(d => d[""] + " : " + numberWithComma(+d[currState].value)),
+                .html(d => d[""] + " : " + d[currState].displayValue),
     pieTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0]) 
@@ -259,7 +259,7 @@ function showBarChart(barChart) {
     //Set display values in Bar Chart section
     if (mapTooltipDataTypeState === MapTooltipDataType.WHOLE) {
         document.getElementById("dataCategory").innerHTML = csvData[currFeature][""].toUpperCase();
-        document.getElementById("dataValue").innerHTML = numberWithComma(+csvData[currFeature][currState].value); 
+        document.getElementById("dataValue").innerHTML = csvData[currFeature][currState].displayValue;
     }
 }
 
@@ -291,6 +291,10 @@ function showPieChart(pieChart) {
     
     // Clean last output
     pieChart.selectAll("g").remove();
+
+    // If pie chart is not required, do not draw
+    let currentDataCategory = dataCategoryConfigs.find(config => config.name === currGroup);
+    if (!currentDataCategory.requiresPieChart) return;
     
     g = pieChart.append("g").attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")"),
     pieColor = d3.scaleOrdinal(d3.schemeCategory20c);
@@ -327,12 +331,10 @@ function showPieChart(pieChart) {
 }
 
 function setFeature(currGroupVal, currGroupNameVal) {
-    //i think here we should update graphData by recalling getGroup(csvData, currGroup)
     document.getElementById("displayedCategory").innerHTML = toDisplayCase(currGroupVal);
     document.getElementById("dropdownMenuButton").innerHTML = currGroupNameVal.toUpperCase();
     currGroup = currGroupVal;
     graphData = getGroup(csvData, currGroup, true);
-    console.log('graphData for ' + currGroupVal, graphData);
     showMap(mapSvg, mapSvgPath);
     redrawDataHandler();
 }   
@@ -377,10 +379,10 @@ function formatData(data) {
         tempVal,
         tempPercentage;
 
-    for (let i = 0; i < dataCategories.length; i++) {
+    for (let i = 0; i < dataCategoryConfigs.length; i++) {
         //for each category, get the collective groups for example:
         //for "age summary" category, grab data on "0 to 20," "21 to 34," etc.
-        currentGroups = getGroup(data, dataCategories[i], false);
+        currentGroups = getGroup(data, dataCategoryConfigs[i].name, false);
         for (let state in STATE_MAP_KEYS) {
             //for each state calculate the total sum of values per group 
             stateGroupTotal = d3.sum(currentGroups, d => d[state]);
@@ -392,6 +394,7 @@ function formatData(data) {
                 
                 currentGroups[groupIndex][state] = {
                     value: tempVal,
+                    displayValue: dataCategoryConfigs[i].isMonetaryValue ? '$' + numberWithComma(tempVal) : numberWithComma(tempVal),
                     percentage: tempPercentage
                 };
             }
@@ -491,13 +494,13 @@ function mouseOverMapHandler(d, i) {
     let toolTipMessage;
     switch (mapTooltipDataTypeState) {
         case MapTooltipDataType.WHOLE: 
-            toolTipMessage = csvData[currFeature][""] + " : " + numberWithComma(csvData[currFeature][d.id].value);
+            toolTipMessage = csvData[currFeature][""] + " : " + csvData[currFeature][d.id].displayValue; 
             break;
         case MapTooltipDataType.PERCENTAGE:
             toolTipMessage = csvData[currFeature][""] + " : " + csvData[currFeature][d.id].percentage;
             break;
         default:
-            toolTipMessage = csvData[currFeature][""] + " : " + numberWithComma(csvData[currFeature][d.id].value);
+            toolTipMessage = csvData[currFeature][""] + " : " + csvData[currFeature][d.id].displayValue;
             break;
     }
     mapTip.show(toolTipMessage, i);
@@ -533,7 +536,7 @@ function clickDataPointHandler(d, i) {
     });
 
     document.getElementById("dataCategory").innerHTML = d[""].toUpperCase();
-    document.getElementById("dataValue").innerHTML = numberWithComma(+d[currState].value);
+    document.getElementById("dataValue").innerHTML = d[currState].displayValue;
     showMap(mapSvg, mapSvgPath, MapTooltipDataType.WHOLE);
     document.getElementById("titleContainer").scrollIntoView();
 }
@@ -604,7 +607,7 @@ function rowSum(data) {
 function columnMax(group, state) {
     m = -Infinity;
     for(i = 0; i < group.length; ++i) {
-        v = group[i][state].value; //here
+        v = group[i][state].value; 
         if(m < v) m = v;
     }
     return m;
