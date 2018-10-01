@@ -69,16 +69,16 @@
                     <a class="dropdown-item" href="#" onclick='setFeature("owner occupied units", "Owner Occupied Units")'>Owner Occupied Units</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("monthly ownership costs", "Monthly Ownership Costs")'>Monthly Ownership Costs</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("gross rent", "Gross Rent")'>Gross Rent</a>
-                    <a class="dropdown-item" href="#" onclick='setFeature("crowding", "Crowding")'>Crowding</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("crowded units", "Crowded Units")'>Crowded Units</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("population for whom poverty status is determined", "Population for Whom Poverty Status is Determined")'>Population for Whom Poverty Status is Determined</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("individuals below poverty", "Individuals Below Poverty")'>Individuals Below Poverty</a>
-                    <a class="dropdown-item" href="#" onclick='setFeature("household income", "Household Income")'>Household Income</a>
-                    <a class="dropdown-item" href="#" onclick='setFeature("family income", "Family Income")'>Family Income</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("median household income", "Median Household Income")'>Median Household Income</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("median family income", "Median Family Income")'>Median Family Income</a>
                     <span class="category-header">BUSINESSES</span>
                     <a class="dropdown-item" href="#" onclick='setFeature("business", "Business Owners")'>Business Owners</a>
-                    <a class="dropdown-item" href="#" onclick='setFeature("none owners vs business owners", "Brazilian Immigrants vs Brazilian Immigrant Business Owners")'>Brazilian Immigrants vs Brazilian Immigrant Business Owners</a>
-                    <a class="dropdown-item" href="#" onclick='setFeature("self employed in incorporated", "Self-employed in Incorporated Businesses")'>Self-employed in Incorporated Businesses</a>
-                    <a class="dropdown-item" href="#" onclick='setFeature("self employed in unincorporated", "Self-employed in Unincorporated Businesses")'>Self-employed in Unincorporated Businesses</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("brazilian immigrants vs brazilian immigrants business owners", "Brazilian Immigrants vs Brazilian Immigrant Business Owners")'>Brazilian Immigrants vs Brazilian Immigrant Business Owners</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("no. of brazilian immigrants who are self-employed in own incorporated business, professional practice, or farm", "No. of Brazilian Immigrants who are Self-employed in own Incorporated Business, Professional Practice, or Farm")'>No. of Brazilian Immigrants who are Self-employed in own Incorporated Business, Professional Practice, or Farm</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("no. of brazilian immigrants who are self-employed in own unincorporated business, professional, practice, or farm", "No. of Brazilian Immigrants who are Self-Employed in own Unincorporated Business, Professional Practice, or Farm")'>No. of Brazilian Immigrants who are Self-Employed in own Unincorporated Business, Professional Practice, or Farm</a>
                     <a 
                       class="dropdown-item glossary-link" 
                       href="https://docs.google.com/document/d/1Tfw5pLRYWzpOczEd6GGPo4G1zRu5Uq47gUWXka2ZakA/edit"
