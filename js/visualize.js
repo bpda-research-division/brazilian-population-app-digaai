@@ -58,7 +58,7 @@ const STATE_MAP_KEYS = {
 };
 
 const dataCategoryConfigs = [
-    { name: "population", isMonetaryValue: false, requiresPieChart: false },
+    { name: "population", isMonetaryValue: false, requiresPieChart: true },
     { name: "age detail", isMonetaryValue: false, requiresPieChart: true },
     { name: "age summary", isMonetaryValue: false, requiresPieChart: true },
     { name: "gender", isMonetaryValue: false, requiresPieChart: true },
@@ -73,20 +73,19 @@ const dataCategoryConfigs = [
     { name: "employment by occupation", isMonetaryValue: false, requiresPieChart: true },
     { name: "population for whom poverty status is determined", isMonetaryValue: false, requiresPieChart: true },
     { name: "individuals below poverty", isMonetaryValue: false, requiresPieChart: true },
-    { name: "income", isMonetaryValue: true, requiresPieChart: true },
+    { name: "income", isMonetaryValue: true, requiresPieChart: false },
     { name: "business", isMonetaryValue: false, requiresPieChart: true },
     { name: "occupied housing units", isMonetaryValue: false, requiresPieChart: false},
-    { name: "total number of families", isMonetaryValue: false, requiresPieChart: false},
-    { name: "families in poverty", isMonetaryValue: false, requiresPieChart: false},
-    { name: "owner occupied units", isMonetaryValue: false, requiresPieChart: false },
+    { name: "total number of families", isMonetaryValue: false, requiresPieChart: true},
+    { name: "families in poverty", isMonetaryValue: false, requiresPieChart: true},
+    { name: "owner occupied units", isMonetaryValue: false, requiresPieChart: true },
     { name: "monthly ownership costs", isMonetaryValue: false, requiresPieChart: true },
     { name: "gross rent", isMonetaryValue: true, requiresPieChart: true },
-    { name: "crowding", isMonetaryValue: false, requiresPieChart: false },
-    { name: "household income",isMonetaryValue: true, requiresPieChart: false},
-    { name: "family income", isMonetaryValue: true, requiresPieChart: false},
-    { name: "none owners vs business owners", isMonetaryValue: false, requiresPieChart: true},
-    { name: "self employed in incorporated", isMonetaryValue: false, requiresPieChart: true },
-    { name: "self employed in unincorporated", isMonetaryValue: false, requiresPieChart: true }
+    { name: "crowded units", isMonetaryValue: false, requiresPieChart: false },
+    { name: "median household income",isMonetaryValue: true, requiresPieChart: false},
+    { name: "median family income", isMonetaryValue: true, requiresPieChart: false},
+    { name: "brazilian immigrants vs brazilian immigrants business owners", isMonetaryValue: false, requiresPieChart: true},
+    { name: "brazilian immigrant business owners by type", isMonetaryValue: false, requiresPieChart: true },
 ];
 
 const MapTooltipDataType = Object.freeze({
@@ -137,7 +136,7 @@ pieSvg.call(pieTip);
 // Load data
 d3.queue()
     .defer(d3.json, "https://d3js.org/us-10m.v1.json")
-    .defer(d3.csv, "resources/all_digaai_data.csv")
+    .defer(d3.csv, "resources/digaaiDataSheet.csv")
     .await(dataReady);
 
 //#endregion
@@ -408,63 +407,61 @@ function getGroup(data, group, changeFeature = false) {
     end = 0;
 
     switch(group) {
-        case "population": start = 0; end = 1;
+        case "population": start = 0; end = 2; 
             break;
-        case "age detail": start = 1; end = 19;
+        case "age detail": start = 2; end = 20;
             break;
-        case "age summary": start = 19; end = 23;
+        case "age summary": start = 20; end = 24;
             break;
-        case "gender": start = 23; end = 25;
+        case "gender": start = 24; end = 26;
             break;
-        case "marriage": start = 25; end = 30;
+        case "marriage": start = 26; end = 31;
             break;
-        case "citizen": start = 30; end = 32;
+        case "citizen": start = 31; end = 33;
             break;
-        case "enter time": start = 32; end = 34;
+        case "enter time": start = 33; end = 35;
             break;
-        case "education": start = 34; end = 37;
+        case "education": start = 35; end = 39;
             break;
-        case "civilian labor force": start = 37; end = 39;
+        case "civilian labor force": start = 39; end = 41;
             break;
-        case "unemployed": start = 39; end = 41;
+        case "unemployed": start = 41; end = 43;
             break;
-        case "employment type": start = 41; end = 45;
+        case "employment type": start = 43; end = 47;
             break;
-        case "employment by industry": start = 45; end = 52;
+        case "employment by industry": start = 47; end = 55;
             break;
-        case "employment by occupation": start = 52; end = 58; 
+        case "employment by occupation": start = 55; end = 61; 
             break;
-        case "population for whom poverty status is determined": start = 58; end = 60;
+        case "population for whom poverty status is determined": start = 61; end = 63;
             break;
-        case "individuals below poverty": start = 60; end = 62;
+        case "individuals below poverty": start = 63; end = 65;
             break;
-        case "income": start = 62; end = 64;
+        case "income": start = 65; end = 67;
             break;
-        case "business": start = 64; end = 66;
+        case "business": start = 68; end = 70; 
             break;
-        case "occupied housing units": start = 66; end = 67;
+        case "occupied housing units": start = 70; end = 71;
             break;
-        case "total number of families": start = 67; end = 68;
+        case "total number of families": start = 71; end = 73;
             break;
-        case "families in poverty": start = 68; end = 69;
+        case "families in poverty": start = 73; end = 75;
             break;
-        case "owner occupied units": start = 69; end = 70;
+        case "owner occupied units": start = 75; end = 77;
             break;
-        case "monthly ownership costs": start = 71; end = 77;
+        case "monthly ownership costs": start = 78; end = 84;
             break;
-        case "gross rent": start = 78; end = 80;
+        case "gross rent": start = 85; end = 92;
             break;
-        case "crowding": start = 80; end = 81;
+        case "crowded units": start = 92; end = 93;
             break;
-        case "household income": start = 81; end = 82;
+        case "median household income": start = 93; end = 94;
             break;
-        case "family income": start = 82; end = 83;
+        case "median family income": start = 94; end = 95;
             break;
-        case "none owners vs business owners": start = 83; end = 85; 
+        case "brazilian immigrants vs brazilian immigrants business owners": start = 95; end = 97; 
             break;
-        case "self employed in incorporated": start = 85; end = 87;
-            break;
-        case "self employed in unincorporated": start = 87; end = 89;
+        case "brazilian immigrant business owners by type": start = 97; end = 99;
             break;
         default:
             break;

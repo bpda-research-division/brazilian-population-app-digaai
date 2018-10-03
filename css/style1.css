@@ -188,7 +188,7 @@
 
 .map-control h2 {
   margin: 0;
-  font-size: 36px;
+  font-size: 28px;
   font-weight: 600;
   line-height: 0.9;
   color: #3B92CF;
@@ -238,10 +238,6 @@
     font-size: 24px;
   }
 
-  .map-control h2 {
-    font-size: 38px;
-  }
-
   .map-control.use-desc-info {
     order: 2;
     margin-top: auto;
@@ -258,7 +254,7 @@
   }
 
   .map-control h2 {
-    font-size: 52px;
+    font-size: 38px;
   }
 
   .use-desc-info p {
