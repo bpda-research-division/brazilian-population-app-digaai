@@ -85,8 +85,7 @@ const dataCategoryConfigs = [
     { name: "median household income",isMonetaryValue: true, requiresPieChart: false},
     { name: "median family income", isMonetaryValue: true, requiresPieChart: false},
     { name: "brazilian immigrants vs brazilian immigrants business owners", isMonetaryValue: false, requiresPieChart: true},
-    { name: "no. of brazilian immigrants who are self-employed in own incorporated business, professional practice, or farm", isMonetaryValue: false, requiresPieChart: true },
-    { name: "no. of brazilian immigrants who are self-employed in own unincorporated business, professional, practice, or farm", isMonetaryValue: false, requiresPieChart: true }
+    { name: "brazilian immigrant business owners by type", isMonetaryValue: false, requiresPieChart: true },
 ];
 
 const MapTooltipDataType = Object.freeze({
@@ -408,11 +407,11 @@ function getGroup(data, group, changeFeature = false) {
     end = 0;
 
     switch(group) {
-        case "population": start = 0; end = 2; //0 and 1
+        case "population": start = 0; end = 2; 
             break;
-        case "age detail": start = 2; end = 21;
+        case "age detail": start = 2; end = 20;
             break;
-        case "age summary": start = 21; end = 24;
+        case "age summary": start = 20; end = 24;
             break;
         case "gender": start = 24; end = 26;
             break;
@@ -440,7 +439,7 @@ function getGroup(data, group, changeFeature = false) {
             break;
         case "income": start = 65; end = 67;
             break;
-        case "business": start = 67; end = 69; //here is the question i asked alvaro, if i am right remove row 67
+        case "business": start = 68; end = 70; 
             break;
         case "occupied housing units": start = 70; end = 71;
             break;
@@ -462,9 +461,7 @@ function getGroup(data, group, changeFeature = false) {
             break;
         case "brazilian immigrants vs brazilian immigrants business owners": start = 95; end = 97; 
             break;
-        case "no. of brazilian immigrants who are self-employed in own incorporated business, professional practice, or farm": start = 97; end = 99;
-            break;
-        case "no. of brazilian immigrants who are self-employed in own unincorporated business, professional, practice, or farm": start = 99; end = 101;
+        case "brazilian immigrant business owners by type": start = 97; end = 99;
             break;
         default:
             break;

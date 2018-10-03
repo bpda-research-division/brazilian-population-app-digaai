@@ -77,8 +77,7 @@
                     <span class="category-header">BUSINESSES</span>
                     <a class="dropdown-item" href="#" onclick='setFeature("business", "Business Owners")'>Business Owners</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("brazilian immigrants vs brazilian immigrants business owners", "Brazilian Immigrants vs Brazilian Immigrant Business Owners")'>Brazilian Immigrants vs Brazilian Immigrant Business Owners</a>
-                    <a class="dropdown-item" href="#" onclick='setFeature("no. of brazilian immigrants who are self-employed in own incorporated business, professional practice, or farm", "No. of Brazilian Immigrants who are Self-employed in own Incorporated Business, Professional Practice, or Farm")'>No. of Brazilian Immigrants who are Self-employed in own Incorporated Business, Professional Practice, or Farm</a>
-                    <a class="dropdown-item" href="#" onclick='setFeature("no. of brazilian immigrants who are self-employed in own unincorporated business, professional, practice, or farm", "No. of Brazilian Immigrants who are Self-Employed in own Unincorporated Business, Professional Practice, or Farm")'>No. of Brazilian Immigrants who are Self-Employed in own Unincorporated Business, Professional Practice, or Farm</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("brazilian immigrant business owners by type", "Brazilian Immigrant Business Owners by Type")'>Brazilian Immigrant Business Owners by Type</a>
                     <a 
                       class="dropdown-item glossary-link" 
                       href="https://docs.google.com/document/d/1Tfw5pLRYWzpOczEd6GGPo4G1zRu5Uq47gUWXka2ZakA/edit"
