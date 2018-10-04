@@ -4,7 +4,7 @@
  * Description: Visualizing ACS estimates.
  */
 
-const STATE_MAP_KEYS = {
+const STATE_MAP_KEYS = Object.freeze({
     "01": "ALABAMA",
     "02": "ALASKA",
     "04": "ARIZONA",
@@ -55,7 +55,7 @@ const STATE_MAP_KEYS = {
     "54": "WEST VIRGINIA",
     "55": "WISCONSIN",
     "56": "WYOMING"
-};
+});
 
 const dataCategoryConfigs = [
     { name: "population", isMonetaryValue: false, requiresPieChart: true },
@@ -80,7 +80,7 @@ const dataCategoryConfigs = [
     { name: "families in poverty", isMonetaryValue: false, requiresPieChart: true},
     { name: "owner occupied units", isMonetaryValue: false, requiresPieChart: true },
     { name: "monthly ownership costs", isMonetaryValue: false, requiresPieChart: true },
-    { name: "gross rent", isMonetaryValue: true, requiresPieChart: true },
+    { name: "gross rent", isMonetaryValue: false, requiresPieChart: true },
     { name: "crowded units", isMonetaryValue: false, requiresPieChart: false },
     { name: "median household income",isMonetaryValue: true, requiresPieChart: false},
     { name: "median family income", isMonetaryValue: true, requiresPieChart: false},
@@ -89,8 +89,8 @@ const dataCategoryConfigs = [
 ];
 
 const MapTooltipDataType = Object.freeze({
-    WHOLE: Symbol('whole'),
-    PERCENTAGE: Symbol('percentage')
+    WHOLE: Symbol("whole"),
+    PERCENTAGE: Symbol("percentage")
 });
 
 //#region Initialize Data
