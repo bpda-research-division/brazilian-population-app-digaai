@@ -86,6 +86,7 @@ const dataCategoryConfigs = [
     { name: "median family income", isMonetaryValue: true, requiresPieChart: false},
     { name: "brazilian immigrants vs brazilian immigrants business owners", isMonetaryValue: false, requiresPieChart: true},
     { name: "brazilian immigrant business owners by type", isMonetaryValue: false, requiresPieChart: true },
+    { name: "english proficiency", isMonetaryValue: false, requiresPieChart: true },
 ];
 
 const MapTooltipDataType = Object.freeze({
@@ -421,47 +422,49 @@ function getGroup(data, group, changeFeature = false) {
             break;
         case "enter time": start = 33; end = 35;
             break;
-        case "education": start = 35; end = 39;
+        case "education": start = 35; end = 38;
             break;
-        case "civilian labor force": start = 39; end = 41;
+        case "civilian labor force": start = 38; end = 40;
             break;
-        case "unemployed": start = 41; end = 43;
+        case "unemployed": start = 40; end = 42;
             break;
-        case "employment type": start = 43; end = 47;
+        case "employment type": start = 42; end = 46;
             break;
-        case "employment by industry": start = 47; end = 55;
+        case "employment by industry": start = 46; end = 54;
             break;
-        case "employment by occupation": start = 55; end = 61; 
+        case "employment by occupation": start = 54; end = 60; 
             break;
-        case "population for whom poverty status is determined": start = 61; end = 63;
+        case "population for whom poverty status is determined": start = 60; end = 62;
             break;
-        case "individuals below poverty": start = 63; end = 65;
+        case "individuals below poverty": start = 62; end = 64;
             break;
-        case "income": start = 65; end = 67;
+        case "income": start = 64; end = 66;
             break;
-        case "business": start = 68; end = 70; 
+        case "business": start = 67; end = 69; 
             break;
-        case "occupied housing units": start = 70; end = 71;
+        case "occupied housing units": start = 69; end = 70;
             break;
-        case "total number of families": start = 71; end = 73;
+        case "total number of families": start = 70; end = 72;
             break;
-        case "families in poverty": start = 73; end = 75;
+        case "families in poverty": start = 72; end = 74;
             break;
-        case "owner occupied units": start = 75; end = 77;
+        case "owner occupied units": start = 74; end = 76;
             break;
-        case "monthly ownership costs": start = 78; end = 84;
+        case "monthly ownership costs": start = 77; end = 83;
             break;
-        case "gross rent": start = 85; end = 92;
+        case "gross rent": start = 84; end = 91;
             break;
-        case "crowded units": start = 92; end = 93;
+        case "crowded units": start = 91; end = 92;
             break;
-        case "median household income": start = 93; end = 94;
+        case "median household income": start = 92; end = 93;
             break;
-        case "median family income": start = 94; end = 95;
+        case "median family income": start = 93; end = 94;
             break;
-        case "brazilian immigrants vs brazilian immigrants business owners": start = 95; end = 97; 
+        case "brazilian immigrants vs brazilian immigrants business owners": start = 94; end = 96; 
             break;
-        case "brazilian immigrant business owners by type": start = 97; end = 99;
+        case "brazilian immigrant business owners by type": start = 96; end = 98;
+            break;
+        case "english proficiency": start = 98; end = 104;
             break;
         default:
             break;
