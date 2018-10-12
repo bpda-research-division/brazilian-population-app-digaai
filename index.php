@@ -56,6 +56,7 @@
                     <a class="dropdown-item" href="#" onclick='setFeature("citizen", "Citizen Status")'>Citizen Status</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("enter time", "Entry Time")'>Entry Time</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("education", "Education")'>Education</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("english proficiency", "English Proficiency")'>English Proficiency</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("civilian labor force", "Civilian Labor Force")'>Civilian Labor Force</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("unemployed", "Employment Status")'>Employment Status</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("employment type", "Employment Type")'>Employment Type</a>
