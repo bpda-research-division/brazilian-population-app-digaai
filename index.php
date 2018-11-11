@@ -21,7 +21,7 @@
     <main role="main">
       <div id="titleContainer" class="title-banner">
         <div class="title-banner-img">
-          <img src="http://digaai.dharmeshtarapore.com:8080/wp-content/themes/digaai/img/diggai.png" alt="logo"/>     
+          <img src="./resources/digaaiLogo.png" alt="logo"/>     
         </div>
         <div class="header-title">
           <h1>VISUALIZING THE <span>BRAZILIAN</span> DIASPORA</h1>
@@ -71,7 +71,6 @@
                     <a class="dropdown-item" href="#" onclick='setFeature("monthly ownership costs", "Monthly Ownership Costs")'>Monthly Ownership Costs</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("gross rent", "Gross Rent")'>Gross Rent</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("crowded units", "Crowded Units")'>Crowded Units</a>
-                    <a class="dropdown-item" href="#" onclick='setFeature("population for whom poverty status is determined", "Population for Whom Poverty Status is Determined")'>Population for Whom Poverty Status is Determined</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("individuals below poverty", "Individuals Below Poverty")'>Individuals Below Poverty</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("median household income", "Median Household Income")'>Median Household Income</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("median family income", "Median Family Income")'>Median Family Income</a>
