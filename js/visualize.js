@@ -57,42 +57,51 @@ const STATE_MAP_KEYS = Object.freeze({
     "56": "WYOMING"
 });
 
-const dataCategoryConfigs = [
-    { name: "population", isMonetaryValue: false, requiresPieChart: true },
-    { name: "age detail", isMonetaryValue: false, requiresPieChart: true },
-    { name: "age summary", isMonetaryValue: false, requiresPieChart: true },
-    { name: "gender", isMonetaryValue: false, requiresPieChart: true },
-    { name: "marriage", isMonetaryValue: false, requiresPieChart: true },
-    { name: "citizen", isMonetaryValue: false, requiresPieChart: true },
-    { name: "enter time", isMonetaryValue: false, requiresPieChart: true},
-    { name: "education", isMonetaryValue: false, requiresPieChart: true },
-    { name: "civilian labor force", isMonetaryValue: false, requiresPieChart: true },
-    { name: "unemployed", isMonetaryValue: false, requiresPieChart: true },
-    { name: "employment type", isMonetaryValue: false, requiresPieChart: true },
-    { name: "employment by industry", isMonetaryValue: false, requiresPieChart: true },
-    { name: "employment by occupation", isMonetaryValue: false, requiresPieChart: true },
-    { name: "population for whom poverty status is determined", isMonetaryValue: false, requiresPieChart: true },
-    { name: "individuals below poverty", isMonetaryValue: false, requiresPieChart: true },
-    { name: "income", isMonetaryValue: true, requiresPieChart: false },
-    { name: "business", isMonetaryValue: false, requiresPieChart: true },
-    { name: "occupied housing units", isMonetaryValue: false, requiresPieChart: false},
-    { name: "total number of families", isMonetaryValue: false, requiresPieChart: true},
-    { name: "families in poverty", isMonetaryValue: false, requiresPieChart: true},
-    { name: "owner occupied units", isMonetaryValue: false, requiresPieChart: true },
-    { name: "monthly ownership costs", isMonetaryValue: false, requiresPieChart: true },
-    { name: "gross rent", isMonetaryValue: false, requiresPieChart: true },
-    { name: "crowded units", isMonetaryValue: false, requiresPieChart: false },
-    { name: "median household income",isMonetaryValue: true, requiresPieChart: false},
-    { name: "median family income", isMonetaryValue: true, requiresPieChart: false},
-    { name: "brazilian immigrants vs brazilian immigrants business owners", isMonetaryValue: false, requiresPieChart: true},
-    { name: "brazilian immigrant business owners by type", isMonetaryValue: false, requiresPieChart: true },
-    { name: "english proficiency", isMonetaryValue: false, requiresPieChart: true },
-];
-
-const MapTooltipDataType = Object.freeze({
+const MAP_TOOL_TIP_DATA_TYPE = Object.freeze({
     WHOLE: Symbol("whole"),
     PERCENTAGE: Symbol("percentage")
 });
+
+const dataCategoryConfigs = [
+    { name: "population", isMonetaryValue: false, barChartFilter: ['Rest of Country'], requiresPieChart: true },
+    { name: "age detail", isMonetaryValue: false, barChartFilter: null, requiresPieChart: true },
+    { name: "age summary", isMonetaryValue: false, barChartFilter: null, requiresPieChart: true },
+    { name: "gender", isMonetaryValue: false, barChartFilter: null, requiresPieChart: true },
+    { name: "marriage", isMonetaryValue: false, barChartFilter: null, requiresPieChart: true },
+    { name: "citizen", isMonetaryValue: false, barChartFilter: null, requiresPieChart: true },
+    { name: "enter time", isMonetaryValue: false, barChartFilter: null, requiresPieChart: true},
+    { name: "education", isMonetaryValue: false, barChartFilter: null, requiresPieChart: true },
+    { name: "civilian labor force", isMonetaryValue: false, barChartFilter: null, requiresPieChart: true },
+    { name: "unemployed", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: true },
+    { name: "employment type", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: true },
+    { name: "employment by industry", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: true },
+    { name: "employment by occupation", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: true },
+    { name: "population for whom poverty status is determined", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: true },
+    { name: "individuals below poverty", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: true },
+    { name: "income", isMonetaryValue: true, barChartFilter: null,  requiresPieChart: false },
+    { name: "business", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: true },
+    { name: "occupied housing units", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: false},
+    { name: "total number of families", isMonetaryValue: false, barChartFilter: ['Rest of Country'], requiresPieChart: true},
+    { name: "families in poverty", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: true},
+    { name: "owner occupied units", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: true },
+    { name: "monthly ownership costs", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: true },
+    { name: "gross rent", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: true },
+    { name: "crowded units", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: false },
+    { name: "median household income",isMonetaryValue: true, barChartFilter: null,  requiresPieChart: false},
+    { name: "median family income", isMonetaryValue: true, barChartFilter: null,  requiresPieChart: false},
+    { name: "brazilian immigrants vs brazilian immigrants business owners", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: true},
+    { name: "brazilian immigrant business owners by type", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: true },
+    { name: "english proficiency", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: true },
+];
+
+//Define more descriptive tool tips for a specific data category
+const barToolTipLabels = {
+    "Population": "The Total Number of Brazilian Immigrants in the State"
+};
+
+const pieToolTipLabels = {
+    "Population": "The Share of Brazilian Immigrants in the State"
+};
 
 //#region Initialize Data
 
@@ -108,7 +117,7 @@ let currFeature = 0,
     currGroupName = "Population",
     lastStateRef = null,
     lastStateHighlightColor = null,
-    mapTooltipDataTypeState = MapTooltipDataType.WHOLE;
+    mapTooltipDataTypeState = MAP_TOOL_TIP_DATA_TYPE.WHOLE;
 
 // Define map and graph svgs with tooltips
 let mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%"),
@@ -119,16 +128,25 @@ let mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%"),
 let mapTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0])
-                // .html(d => csvData[currFeature][""] + " : " + numberWithComma(csvData[currFeature][d.id])),
-                .html(d => d),
+                .html(d => {
+                    return d;
+                }),
     barTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0])
-                .html(d => d[""] + " : " + d[currState].displayValue),
+                .html(d => { 
+                    let categoryName = d[""];
+                    let label = barToolTipLabels[categoryName] || categoryName;
+                    return label + " : " + d[currState].displayValue;
+                }),
     pieTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0]) 
-                .html(d => d.data[""] + " : " + d.data[currState].percentage); //come back here and with new formatted data
+                .html(d => {
+                    let categoryName = d.data[""];
+                    let label = pieToolTipLabels[categoryName] || categoryName;
+                    return label + " : " + d.data[currState].percentage;
+                }); 
 
 mapSvg.call(mapTip);
 barSvg.call(barTip);
@@ -145,7 +163,7 @@ d3.queue()
 //#region Data Visualize Methods
 
 // Load the map
-function showMap(map, mapPath, mapTooltip = MapTooltipDataType.WHOLE) {
+function showMap(map, mapPath, mapTooltip = MAP_TOOL_TIP_DATA_TYPE.WHOLE) {
     map.selectAll("g").remove();
     map.selectAll("path").remove();
     let mapColor = null;
@@ -214,8 +232,12 @@ function showBarChart(barChart) {
 
     let x = d3.scaleBand().rangeRound([0, barWidth]).padding(0.1);
     let y = d3.scaleLinear().rangeRound([barHeight, 0]);
-    x.domain(graphData.map(d => d[""]));
-    y.domain([0, columnMax(graphData, currState)]);
+
+    //Filter graphData  based on data config barChartFilters
+    let currentDataCategoryConfig = dataCategoryConfigs.find(function(i) { return i.name === currGroup });
+    let filteredGraphData = filterDataForDisplay(graphData, currentDataCategoryConfig.barChartFilter);
+    x.domain(filteredGraphData.map(d => d[""]));
+    y.domain([0, columnMax(filteredGraphData, currState)]);
 
     let barColor = d3.scaleOrdinal(d3.schemeCategory20c);
 
@@ -243,7 +265,7 @@ function showBarChart(barChart) {
         .text("Frequency");
 
     g.selectAll(".bar")
-        .data(graphData)
+        .data(filteredGraphData)
         .enter()
         .append("rect")
         .attr("class", "bar")
@@ -257,7 +279,7 @@ function showBarChart(barChart) {
         .on("mouseout", barTip.hide);
 
     //Set display values in Bar Chart section
-    if (mapTooltipDataTypeState === MapTooltipDataType.WHOLE) {
+    if (mapTooltipDataTypeState === MAP_TOOL_TIP_DATA_TYPE.WHOLE) {
         document.getElementById("dataCategory").innerHTML = csvData[currFeature][""].toUpperCase();
         document.getElementById("dataValue").innerHTML = csvData[currFeature][currState].displayValue;
     }
@@ -324,7 +346,7 @@ function showPieChart(pieChart) {
         x = d3.scaleBand().rangeRound([0, wid]).padding(0.1);
         x.domain(graphData.map(d => d[""]));
 
-    if (mapTooltipDataTypeState === MapTooltipDataType.PERCENTAGE) {
+    if (mapTooltipDataTypeState === MAP_TOOL_TIP_DATA_TYPE.PERCENTAGE) {
         document.getElementById("dataCategory").innerHTML = csvData[currFeature][""].toUpperCase();
         document.getElementById("dataValue").innerHTML = csvData[currFeature][currState].percentage; 
     }
@@ -380,8 +402,8 @@ function formatData(data) {
         tempPercentage;
 
     for (let i = 0; i < dataCategoryConfigs.length; i++) {
-        //for each category, get the collective groups for example:
-        //for "age summary" category, grab data on "0 to 20," "21 to 34," etc.
+        //for each category, get the collective groups. 
+        //for example: for "age summary" category, grab data on "0 to 20," "21 to 34," etc.
         currentGroups = getGroup(data, dataCategoryConfigs[i].name, false);
         for (let state in STATE_MAP_KEYS) {
             //for each state calculate the total sum of values per group 
@@ -408,71 +430,70 @@ function getGroup(data, group, changeFeature = false) {
     end = 0;
 
     switch(group) {
-        case "population": start = 0; end = 1; 
+        case "population": start = 0; end = 2;  
             break;
-        case "age detail": start = 1; end = 19;
+        case "age detail": start = 2; end = 20;
             break;
-        case "age summary": start = 19; end = 23;
+        case "age summary": start = 20; end = 24;
             break;
-        case "gender": start = 23; end = 25;
+        case "gender": start = 24; end = 26;
             break;
-        case "marriage": start = 25; end = 30;
+        case "marriage": start = 26; end = 31;
             break;
-        case "citizen": start = 30; end = 32;
+        case "citizen": start = 31; end = 33;
             break;
-        case "enter time": start = 32; end = 34;
+        case "enter time": start = 33; end = 35;
             break;
-        case "education": start = 34; end = 37;
+        case "education": start = 35; end = 38;
             break;
-        case "civilian labor force": start = 37; end = 39;
+        case "civilian labor force": start = 38; end = 40;
             break;
-        case "unemployed": start = 39; end = 41;
+        case "unemployed": start = 40; end = 42;
             break;
-        case "employment type": start = 41; end = 45;
+        case "employment type": start = 42; end = 46;
             break;
-        case "employment by industry": start = 45; end = 53;
+        case "employment by industry": start = 46; end = 54;
             break;
-        case "employment by occupation": start = 53; end = 59; 
+        case "employment by occupation": start = 54; end = 60; 
             break;
-        case "population for whom poverty status is determined": start = 59; end = 61;
+        case "population for whom poverty status is determined": start = 60; end = 62;
             break;
-        case "individuals below poverty": start = 61; end = 63;
+        case "individuals below poverty": start = 62; end = 64;
             break;
-        case "income": start = 63; end = 65;
+        case "income": start = 64; end = 66;
             break;
-        case "business": start = 66; end = 68; 
+        case "business": start = 67; end = 69; 
             break;
-        case "occupied housing units": start = 68; end = 69;
+        case "occupied housing units": start = 69; end = 70;
             break;
-        case "total number of families": start = 69; end = 70;
+        case "total number of families": start = 70; end = 72;
             break;
-        case "families in poverty": start = 70; end = 72;
+        case "families in poverty": start = 72; end = 74;
             break;
-        case "owner occupied units": start = 72; end = 74;
+        case "owner occupied units": start = 74; end = 76;
             break;
-        case "monthly ownership costs": start = 75; end = 81;
+        case "monthly ownership costs": start = 77; end = 83;
             break;
-        case "gross rent": start = 82; end = 89;
+        case "gross rent": start = 84; end = 91;
             break;
-        case "crowded units": start = 89; end = 90;
+        case "crowded units": start = 91; end = 92;
             break;
-        case "median household income": start = 90; end = 91;
+        case "median household income": start = 92; end = 93;
             break;
-        case "median family income": start = 91; end = 92;
+        case "median family income": start = 93; end = 94;
             break;
-        case "brazilian immigrants vs brazilian immigrants business owners": start = 92; end = 94; 
+        case "brazilian immigrants vs brazilian immigrants business owners": start = 94; end = 96; 
             break;
-        case "brazilian immigrant business owners by type": start = 94; end = 96;
+        case "brazilian immigrant business owners by type": start = 96; end = 98;
             break;
-        case "english proficiency": start = 96; end = 102;
+        case "english proficiency": start = 98; end = 104;
             break;
         default:
             break;
     }
 
-    if(changeFeature) {
-        currFeature = d3.min([d3.max([start, currFeature]), end - 1]);
-    }
+    if(changeFeature) 
+        currFeature = start;
 
     return data.slice(start, end);
 }
@@ -492,12 +513,16 @@ window.addEventListener("resize", redrawDataHandler);
 
 function mouseOverMapHandler(d, i) {
     let toolTipMessage;
+    let categoryName = csvData[currFeature][""];
+    let label = "";
     switch (mapTooltipDataTypeState) {
-        case MapTooltipDataType.WHOLE: 
-            toolTipMessage = csvData[currFeature][""] + " : " + csvData[currFeature][d.id].displayValue; 
+        case MAP_TOOL_TIP_DATA_TYPE.WHOLE: 
+            label = barToolTipLabels[categoryName] || categoryName;
+            toolTipMessage = label + " : " + csvData[currFeature][d.id].displayValue; 
             break;
-        case MapTooltipDataType.PERCENTAGE:
-            toolTipMessage = csvData[currFeature][""] + " : " + csvData[currFeature][d.id].percentage;
+        case MAP_TOOL_TIP_DATA_TYPE.PERCENTAGE:
+            label = pieToolTipLabels[categoryName] || categoryName;
+            toolTipMessage = label + " : " + csvData[currFeature][d.id].percentage;
             break;
         default:
             toolTipMessage = csvData[currFeature][""] + " : " + csvData[currFeature][d.id].displayValue;
@@ -537,7 +562,7 @@ function clickDataPointHandler(d, i) {
 
     document.getElementById("dataCategory").innerHTML = d[""].toUpperCase();
     document.getElementById("dataValue").innerHTML = d[currState].displayValue;
-    showMap(mapSvg, mapSvgPath, MapTooltipDataType.WHOLE);
+    showMap(mapSvg, mapSvgPath, MAP_TOOL_TIP_DATA_TYPE.WHOLE);
     document.getElementById("titleContainer").scrollIntoView();
 }
 
@@ -548,7 +573,7 @@ function clickPieHandler(d, i) {
 
     document.getElementById("dataCategory").innerHTML = d.data[""].toUpperCase();
     document.getElementById("dataValue").innerHTML = d.data[currState].percentage;
-    showMap(mapSvg, mapSvgPath, MapTooltipDataType.PERCENTAGE);
+    showMap(mapSvg, mapSvgPath, MAP_TOOL_TIP_DATA_TYPE.PERCENTAGE);
     document.getElementById("titleContainer").scrollIntoView();
 }
 
@@ -620,4 +645,15 @@ function numberWithComma(x) {
 function mapToState(mapId) {
     return STATE_MAP_KEYS[mapId] || 'MASSACHUSETTS';
 };
+
+function filterDataForDisplay(data, filterOptions) {
+    if (!filterOptions || !filterOptions.length) return data;
+
+    let filteredData = data.filter(function(i) {
+        return filterOptions.indexOf(i[""]) < 0;
+    });
+
+    return filteredData;
+}
+
 //#endregion
