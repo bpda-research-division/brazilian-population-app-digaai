@@ -57,6 +57,11 @@ const STATE_MAP_KEYS = Object.freeze({
     "56": "WYOMING"
 });
 
+const MAP_TOOL_TIP_DATA_TYPE = Object.freeze({
+    WHOLE: Symbol("whole"),
+    PERCENTAGE: Symbol("percentage")
+});
+
 const dataCategoryConfigs = [
     { name: "population", isMonetaryValue: false, barChartFilter: ['Rest of Country'], requiresPieChart: true },
     { name: "age detail", isMonetaryValue: false, barChartFilter: null, requiresPieChart: true },
@@ -89,10 +94,14 @@ const dataCategoryConfigs = [
     { name: "english proficiency", isMonetaryValue: false, barChartFilter: null,  requiresPieChart: true },
 ];
 
-const MapTooltipDataType = Object.freeze({
-    WHOLE: Symbol("whole"),
-    PERCENTAGE: Symbol("percentage")
-});
+//Define more descriptive tool tips for a specific data category
+const barToolTipLabels = {
+    "Population": "The Total Number of Brazilian Immigrants in the State"
+};
+
+const pieToolTipLabels = {
+    "Population": "The Share of Brazilian Immigrants in the State"
+};
 
 //#region Initialize Data
 
@@ -108,7 +117,7 @@ let currFeature = 0,
     currGroupName = "Population",
     lastStateRef = null,
     lastStateHighlightColor = null,
-    mapTooltipDataTypeState = MapTooltipDataType.WHOLE;
+    mapTooltipDataTypeState = MAP_TOOL_TIP_DATA_TYPE.WHOLE;
 
 // Define map and graph svgs with tooltips
 let mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%"),
@@ -119,16 +128,25 @@ let mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%"),
 let mapTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0])
-                // .html(d => csvData[currFeature][""] + " : " + numberWithComma(csvData[currFeature][d.id])),
-                .html(d => d),
+                .html(d => {
+                    return d;
+                }),
     barTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0])
-                .html(d => d[""] + " : " + d[currState].displayValue),
+                .html(d => { 
+                    let categoryName = d[""];
+                    let label = barToolTipLabels[categoryName] || categoryName;
+                    return label + " : " + d[currState].displayValue;
+                }),
     pieTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0]) 
-                .html(d => d.data[""] + " : " + d.data[currState].percentage); //come back here and with new formatted data
+                .html(d => {
+                    let categoryName = d.data[""];
+                    let label = pieToolTipLabels[categoryName] || categoryName;
+                    return label + " : " + d.data[currState].percentage;
+                }); 
 
 mapSvg.call(mapTip);
 barSvg.call(barTip);
@@ -145,7 +163,7 @@ d3.queue()
 //#region Data Visualize Methods
 
 // Load the map
-function showMap(map, mapPath, mapTooltip = MapTooltipDataType.WHOLE) {
+function showMap(map, mapPath, mapTooltip = MAP_TOOL_TIP_DATA_TYPE.WHOLE) {
     map.selectAll("g").remove();
     map.selectAll("path").remove();
     let mapColor = null;
@@ -261,7 +279,7 @@ function showBarChart(barChart) {
         .on("mouseout", barTip.hide);
 
     //Set display values in Bar Chart section
-    if (mapTooltipDataTypeState === MapTooltipDataType.WHOLE) {
+    if (mapTooltipDataTypeState === MAP_TOOL_TIP_DATA_TYPE.WHOLE) {
         document.getElementById("dataCategory").innerHTML = csvData[currFeature][""].toUpperCase();
         document.getElementById("dataValue").innerHTML = csvData[currFeature][currState].displayValue;
     }
@@ -328,7 +346,7 @@ function showPieChart(pieChart) {
         x = d3.scaleBand().rangeRound([0, wid]).padding(0.1);
         x.domain(graphData.map(d => d[""]));
 
-    if (mapTooltipDataTypeState === MapTooltipDataType.PERCENTAGE) {
+    if (mapTooltipDataTypeState === MAP_TOOL_TIP_DATA_TYPE.PERCENTAGE) {
         document.getElementById("dataCategory").innerHTML = csvData[currFeature][""].toUpperCase();
         document.getElementById("dataValue").innerHTML = csvData[currFeature][currState].percentage; 
     }
@@ -384,8 +402,8 @@ function formatData(data) {
         tempPercentage;
 
     for (let i = 0; i < dataCategoryConfigs.length; i++) {
-        //for each category, get the collective groups for example:
-        //for "age summary" category, grab data on "0 to 20," "21 to 34," etc.
+        //for each category, get the collective groups. 
+        //for example: for "age summary" category, grab data on "0 to 20," "21 to 34," etc.
         currentGroups = getGroup(data, dataCategoryConfigs[i].name, false);
         for (let state in STATE_MAP_KEYS) {
             //for each state calculate the total sum of values per group 
@@ -474,9 +492,8 @@ function getGroup(data, group, changeFeature = false) {
             break;
     }
 
-    if(changeFeature) {
-        currFeature = d3.min([d3.max([start, currFeature]), end - 1]);
-    }
+    if(changeFeature) 
+        currFeature = start;
 
     return data.slice(start, end);
 }
@@ -496,12 +513,16 @@ window.addEventListener("resize", redrawDataHandler);
 
 function mouseOverMapHandler(d, i) {
     let toolTipMessage;
+    let categoryName = csvData[currFeature][""];
+    let label = "";
     switch (mapTooltipDataTypeState) {
-        case MapTooltipDataType.WHOLE: 
-            toolTipMessage = csvData[currFeature][""] + " : " + csvData[currFeature][d.id].displayValue; 
+        case MAP_TOOL_TIP_DATA_TYPE.WHOLE: 
+            label = barToolTipLabels[categoryName] || categoryName;
+            toolTipMessage = label + " : " + csvData[currFeature][d.id].displayValue; 
             break;
-        case MapTooltipDataType.PERCENTAGE:
-            toolTipMessage = csvData[currFeature][""] + " : " + csvData[currFeature][d.id].percentage;
+        case MAP_TOOL_TIP_DATA_TYPE.PERCENTAGE:
+            label = pieToolTipLabels[categoryName] || categoryName;
+            toolTipMessage = label + " : " + csvData[currFeature][d.id].percentage;
             break;
         default:
             toolTipMessage = csvData[currFeature][""] + " : " + csvData[currFeature][d.id].displayValue;
@@ -541,7 +562,7 @@ function clickDataPointHandler(d, i) {
 
     document.getElementById("dataCategory").innerHTML = d[""].toUpperCase();
     document.getElementById("dataValue").innerHTML = d[currState].displayValue;
-    showMap(mapSvg, mapSvgPath, MapTooltipDataType.WHOLE);
+    showMap(mapSvg, mapSvgPath, MAP_TOOL_TIP_DATA_TYPE.WHOLE);
     document.getElementById("titleContainer").scrollIntoView();
 }
 
@@ -552,7 +573,7 @@ function clickPieHandler(d, i) {
 
     document.getElementById("dataCategory").innerHTML = d.data[""].toUpperCase();
     document.getElementById("dataValue").innerHTML = d.data[currState].percentage;
-    showMap(mapSvg, mapSvgPath, MapTooltipDataType.PERCENTAGE);
+    showMap(mapSvg, mapSvgPath, MAP_TOOL_TIP_DATA_TYPE.PERCENTAGE);
     document.getElementById("titleContainer").scrollIntoView();
 }
 
