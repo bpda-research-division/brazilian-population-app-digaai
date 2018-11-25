@@ -19,9 +19,9 @@
 
   <body>
     <main role="main">
-      <div class="title-banner">
+      <div id="titleContainer" class="title-banner">
         <div class="title-banner-img">
-          <img src="http://digaai.dharmeshtarapore.com:8080/wp-content/themes/digaai/img/diggai.png" alt="logo"/>     
+          <img src="./resources/digaaiLogo.png" alt="logo"/>     
         </div>
         <div class="header-title">
           <h1>VISUALIZING THE <span>BRAZILIAN</span> DIASPORA</h1>
@@ -34,6 +34,12 @@
             <svg id="map" viewBox="0 0 960 600"></svg>
           </div>
           <div class="col-12 col-md-6 map-control-container">
+              <div class="map-control use-desc-info">
+                <p>Choose a Category</p>
+                <p>Hover over the map to see data by state</p>
+                <p>Click on a state to explore data on graphs</p>
+                <p>Click on graph to explore data on map</p>
+              </div>
               <div class="map-control category-dropdown-container">
                 <h3>CATEGORIES</h3>
                 <div class="dropdown">    
@@ -41,6 +47,7 @@
                     CATEGORIES
                   </button>           
                   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <span class="category-header">PERSONS</span>
                     <a class="dropdown-item" href="#" onclick='setFeature("population", "Population")'>Population</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("age detail", "Ages")'>Ages</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("age summary", "Ages Grouped")'>Ages Grouped</a>
@@ -49,24 +56,34 @@
                     <a class="dropdown-item" href="#" onclick='setFeature("citizen", "Citizen Status")'>Citizen Status</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("enter time", "Entry Time")'>Entry Time</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("education", "Education")'>Education</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("english proficiency", "English Proficiency")'>English Proficiency</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("civilian labor force", "Civilian Labor Force")'>Civilian Labor Force</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("unemployed", "Employment Status")'>Employment Status</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("employment type", "Employment Type")'>Employment Type</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("employment by industry", "Employment by Industry")'>Employment by Industry</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("employment by occupation", "Employment by Occupation")'>Employment by Occupation</a>
-                    <a class="dropdown-item" href="#" onclick='setFeature("income", "Yearly Income")'>Yearly Income</a>
-                    <a class="dropdown-item" href="#" onclick='setFeature("business", "Business Owners")'>Business Owners</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("income", "Personal Earnings")'>Personal Earnings</a>
+                    <span class="category-header">HOUSEHOLDS &amp; FAMILIES</span>
                     <a class="dropdown-item" href="#" onclick='setFeature("occupied housing units", "Occupied Housing Units")'>Occupied Housing Units</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("total number of families", "Total Number of Families")'>Total Number of Families</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("families in poverty", "Families in Poverty")'>Families in Poverty</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("owner occupied units", "Owner Occupied Units")'>Owner Occupied Units</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("monthly ownership costs", "Monthly Ownership Costs")'>Monthly Ownership Costs</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("gross rent", "Gross Rent")'>Gross Rent</a>
-                    <a class="dropdown-item" href="#" onclick='setFeature("household income", "Household Income")'>Household Income</a>
-                    <a class="dropdown-item" href="#" onclick='setFeature("family income", "Family Income")'>Family Income</a>
-                    <a class="dropdown-item" href="#" onclick='setFeature("none owners vs business owners", "Brazilian Immigrants vs Brazilian Immigrant Business Owners")'>Brazilian Immigrants vs Brazilian Immigrant Business Owners</a>
-                    <a class="dropdown-item" href="#" onclick='setFeature("self employed in incorporated", "Self-employed in Incorporated Businesses")'>Self-employed in Incorporated Businesses</a>
-                    <a class="dropdown-item" href="#" onclick='setFeature("self employed in unincorporated", "Self-employed in Unincorporated Businesses")'>Self-employed in Unincorporated Businesses</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("crowded units", "Crowded Units")'>Crowded Units</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("individuals below poverty", "Individuals Below Poverty")'>Individuals Below Poverty</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("median household income", "Median Household Income")'>Median Household Income</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("median family income", "Median Family Income")'>Median Family Income</a>
+                    <span class="category-header">BUSINESSES</span>
+                    <a class="dropdown-item" href="#" onclick='setFeature("business", "Business Owners")'>Business Owners</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("brazilian immigrants vs brazilian immigrants business owners", "Brazilian Immigrants vs Brazilian Immigrant Business Owners")'>Brazilian Immigrants vs Brazilian Immigrant Business Owners</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("brazilian immigrant business owners by type", "Brazilian Immigrant Business Owners by Type")'>Brazilian Immigrant Business Owners by Type</a>
+                    <a 
+                      class="dropdown-item glossary-link" 
+                      href="https://docs.google.com/document/d/1Tfw5pLRYWzpOczEd6GGPo4G1zRu5Uq47gUWXka2ZakA/edit"
+                      target="_blank">
+                      GLOSSARY
+                    </a>
                   </div>
                 </div>
               </div>

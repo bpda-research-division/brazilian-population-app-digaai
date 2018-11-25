@@ -1,10 +1,10 @@
 /*
  * Filename: visualize.js
- * Authors: Dharmesh Tarapore <dharmesh@cs.bu.edu> and Aaron Elliot
+ * Authors: Dharmesh Tarapore <dharmesh@cs.bu.edu>, Aaron Elliot, and Brian Tan <brian.lin.tan@gmail.com>
  * Description: Visualizing ACS estimates.
  */
 
-const STATE_MAP_KEYS = {
+const STATE_MAP_KEYS = Object.freeze({
     "01": "ALABAMA",
     "02": "ALASKA",
     "04": "ARIZONA",
@@ -55,41 +55,80 @@ const STATE_MAP_KEYS = {
     "54": "WEST VIRGINIA",
     "55": "WISCONSIN",
     "56": "WYOMING"
-};
+});
+
+const dataCategoryConfigs = [
+    { name: "population", isMonetaryValue: false, requiresPieChart: true },
+    { name: "age detail", isMonetaryValue: false, requiresPieChart: true },
+    { name: "age summary", isMonetaryValue: false, requiresPieChart: true },
+    { name: "gender", isMonetaryValue: false, requiresPieChart: true },
+    { name: "marriage", isMonetaryValue: false, requiresPieChart: true },
+    { name: "citizen", isMonetaryValue: false, requiresPieChart: true },
+    { name: "enter time", isMonetaryValue: false, requiresPieChart: true},
+    { name: "education", isMonetaryValue: false, requiresPieChart: true },
+    { name: "civilian labor force", isMonetaryValue: false, requiresPieChart: true },
+    { name: "unemployed", isMonetaryValue: false, requiresPieChart: true },
+    { name: "employment type", isMonetaryValue: false, requiresPieChart: true },
+    { name: "employment by industry", isMonetaryValue: false, requiresPieChart: true },
+    { name: "employment by occupation", isMonetaryValue: false, requiresPieChart: true },
+    { name: "population for whom poverty status is determined", isMonetaryValue: false, requiresPieChart: true },
+    { name: "individuals below poverty", isMonetaryValue: false, requiresPieChart: true },
+    { name: "income", isMonetaryValue: true, requiresPieChart: false },
+    { name: "business", isMonetaryValue: false, requiresPieChart: true },
+    { name: "occupied housing units", isMonetaryValue: false, requiresPieChart: false},
+    { name: "total number of families", isMonetaryValue: false, requiresPieChart: true},
+    { name: "families in poverty", isMonetaryValue: false, requiresPieChart: true},
+    { name: "owner occupied units", isMonetaryValue: false, requiresPieChart: true },
+    { name: "monthly ownership costs", isMonetaryValue: false, requiresPieChart: true },
+    { name: "gross rent", isMonetaryValue: false, requiresPieChart: true },
+    { name: "crowded units", isMonetaryValue: false, requiresPieChart: false },
+    { name: "median household income",isMonetaryValue: true, requiresPieChart: false},
+    { name: "median family income", isMonetaryValue: true, requiresPieChart: false},
+    { name: "brazilian immigrants vs brazilian immigrants business owners", isMonetaryValue: false, requiresPieChart: true},
+    { name: "brazilian immigrant business owners by type", isMonetaryValue: false, requiresPieChart: true },
+    { name: "english proficiency", isMonetaryValue: false, requiresPieChart: true },
+];
+
+const MapTooltipDataType = Object.freeze({
+    WHOLE: Symbol("whole"),
+    PERCENTAGE: Symbol("percentage")
+});
 
 //#region Initialize Data
 
-let mapData = null;
-let chartData = null;
+let mapData = null,
+    csvData = null,
+    formattedData = null,
+    graphData = null;
 
-let currFeature = 0;
-let lockedState = "25";
-let currState = "25";
-let currGroup = "population";
-let currGroupName = "Population";
-let lastStateRef = null;
-let lastStateHighlightColor = null;
+let currFeature = 0,
+    lockedState = "25",
+    currState = "25",
+    currGroup = "population",
+    currGroupName = "Population",
+    lastStateRef = null,
+    lastStateHighlightColor = null,
+    mapTooltipDataTypeState = MapTooltipDataType.WHOLE;
 
 // Define map and graph svgs with tooltips
-let mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%");
-let mapSvgPath = d3.geoPath();
-let barSvg = d3.select("#bar");
-let pieSvg = d3.select("#pie");
+let mapSvg = d3.select("#map").attr("width", "100%").attr("height", "100%"),
+    mapSvgPath = d3.geoPath(),
+    barSvg = d3.select("#bar"),
+    pieSvg = d3.select("#pie");
 
 let mapTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0])
-                .html(d => chartData[currFeature][""] + " : " + chartData[currFeature][d.id]);
-
-let barTip = d3.tip()
+                // .html(d => csvData[currFeature][""] + " : " + numberWithComma(csvData[currFeature][d.id])),
+                .html(d => d),
+    barTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0])
-                .html(d => d[""] + " : " + d[currState]);
-
-let pieTip = d3.tip()
+                .html(d => d[""] + " : " + d[currState].displayValue),
+    pieTip = d3.tip()
                 .attr("class", "tip")
                 .offset([-8, 0]) 
-                .html(d => d.data[""] + " : " + d.data.percentage); 
+                .html(d => d.data[""] + " : " + d.data[currState].percentage); //come back here and with new formatted data
 
 mapSvg.call(mapTip);
 barSvg.call(barTip);
@@ -98,7 +137,7 @@ pieSvg.call(pieTip);
 // Load data
 d3.queue()
     .defer(d3.json, "https://d3js.org/us-10m.v1.json")
-    .defer(d3.csv, "resources/all_digaai_data.csv")
+    .defer(d3.csv, "https://digaai.com/vresources/")
     .await(dataReady);
 
 //#endregion
@@ -106,23 +145,29 @@ d3.queue()
 //#region Data Visualize Methods
 
 // Load the map
-function showMap(map, mapPath) {
+function showMap(map, mapPath, mapTooltip = MapTooltipDataType.WHOLE) {
     map.selectAll("g").remove();
     map.selectAll("path").remove();
     let mapColor = null;
 
     color = d3.scaleLinear()
-                .domain([0, rowSum(chartData[currFeature])])
+                .domain([0, rowSum(csvData[currFeature])])
                 .range(['#c6dbef', '#2d0894']);
-    mapColor = (d) => { 
-        return color(chartData[currFeature][d.id])
+    mapColor = (d) => {
+        if (d.id === lockedState)
+            return "orange";
+        else
+            return color(csvData[currFeature][d.id].value);
     };
+
+    mapTooltipDataTypeState = mapTooltip;
 
     map.append("g")
             .attr("class", "state-inner")
             .selectAll("path")
             .data(topojson.feature(mapData, mapData.objects.states).features)
             .enter().append("path")
+            .attr("id", d => "state" + d.id.toString())
             .attr("fill", d => mapColor(d))
             .attr("d", mapPath)
             .on("mouseover", mouseOverMapHandler)
@@ -133,14 +178,20 @@ function showMap(map, mapPath) {
             .datum(topojson.mesh(mapData, mapData.objects.states, (a, b) => a !== b))
             .attr("class", "states")
             .attr("d", mapPath);
+
+    lastStateRef = map.select("#state" + lockedState.toString());
+    lastStateHighlightColor = color(csvData[currFeature][lockedState].value);
 }
 
 // Load the bar chart
 function showBarChart(barChart) {
     //There is probably a better way to handle resizing the chart
-    let chartWidth, chartHeight, barWidth, barHeight;
-    let barMargin = { top: 20, right: 0, bottom: 100, left: 50 }; 
-    let screenWidth = parseInt(document.body.clientWidth);
+    let chartWidth, 
+        chartHeight, 
+        barWidth, 
+        barHeight,
+        barMargin = { top: 20, right: 0, bottom: 100, left: 50 },
+        screenWidth = parseInt(document.body.clientWidth);
     
     if (screenWidth < 768) {
         chartWidth = barChart.attr("sm-width");
@@ -161,11 +212,10 @@ function showBarChart(barChart) {
     // Clean last output
     barChart.select("g").remove();
 
-    let data = getGroup(chartData, currGroup);
     let x = d3.scaleBand().rangeRound([0, barWidth]).padding(0.1);
     let y = d3.scaleLinear().rangeRound([barHeight, 0]);
-    x.domain(data.map(d => d[""]));
-    y.domain([0, columnMax(data, currState)]);
+    x.domain(graphData.map(d => d[""]));
+    y.domain([0, columnMax(graphData, currState)]);
 
     let barColor = d3.scaleOrdinal(d3.schemeCategory20c);
 
@@ -193,29 +243,33 @@ function showBarChart(barChart) {
         .text("Frequency");
 
     g.selectAll(".bar")
-        .data(data)
+        .data(graphData)
         .enter()
         .append("rect")
         .attr("class", "bar")
         .attr("x", d => x(d[""]))
-        .attr("y", d => y(d[currState]))
+        .attr("y", d => y(d[currState].value))
         .attr("width", x.bandwidth())
-        .attr("height", d => barHeight - y(d[currState]))
+        .attr("height", d => barHeight - y(d[currState].value))
         // .attr("fill", d => barColor(d[""])) //to enable comment out css .bar fill color
         .on("click", clickDataPointHandler)
         .on("mouseover", barTip.show)
         .on("mouseout", barTip.hide);
 
     //Set display values in Bar Chart section
-    document.getElementById("dataCategory").innerHTML = chartData[currFeature][""].toUpperCase();
-    document.getElementById("dataValue").innerHTML = numberWithComma(parseInt(chartData[currFeature][currState]));
+    if (mapTooltipDataTypeState === MapTooltipDataType.WHOLE) {
+        document.getElementById("dataCategory").innerHTML = csvData[currFeature][""].toUpperCase();
+        document.getElementById("dataValue").innerHTML = csvData[currFeature][currState].displayValue;
+    }
 }
 
 // Load the pie chart
 function showPieChart(pieChart) {
-    let pieWidth, pieHeight, pieRadius;
-    let pieMargin = { top: 0, right: 0, bottom: 0, left: 0 };
-    let screenWidth = parseInt(document.body.clientWidth);
+    let pieWidth, 
+        pieHeight, 
+        pieRadius,
+        pieMargin = { top: 0, right: 0, bottom: 0, left: 0 },
+        screenWidth = parseInt(document.body.clientWidth);
 
     if (screenWidth < 768) {
         pieWidth = +pieChart.attr("sm-width");
@@ -237,27 +291,17 @@ function showPieChart(pieChart) {
     
     // Clean last output
     pieChart.selectAll("g").remove();
-    
-    data = getGroup(chartData, currGroup);
+
+    // If pie chart is not required, do not draw
+    let currentDataCategory = dataCategoryConfigs.find(config => config.name === currGroup);
+    if (!currentDataCategory.requiresPieChart) return;
     
     g = pieChart.append("g").attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")"),
     pieColor = d3.scaleOrdinal(d3.schemeCategory20c);
 
-    let tots = d3.sum(data, function(d) { 
-            return d[currState]; 
-        });
-
-    // God have mercy on my soul.
-    // I'm so, so sorry for this.
-    data.forEach(function(d) {
-        d.percentage = d[currState]  / tots;
-        d.percentage = (d.percentage * 100).toFixed(2);
-        d.percentage = d.percentage + "%";
-    });
-
     pie = d3.pie()
             .sort(null)
-            .value(d => d[currState]);
+            .value(d => d[currState].value);
     
     piePath = d3.arc()
                 .outerRadius(pieRadius - 10)
@@ -265,7 +309,7 @@ function showPieChart(pieChart) {
 
 
     arc = g.selectAll(".arc")
-                .data(pie(data))
+                .data(pie(graphData))
                 .enter().append("g")
                 .attr("class", "arc");
 
@@ -276,83 +320,28 @@ function showPieChart(pieChart) {
         .on("mouseover", pieTip.show)
         .on("mouseout", pieTip.hide);
 
-    wid = data.length * 12;
+    wid = graphData.length * 12;
         x = d3.scaleBand().rangeRound([0, wid]).padding(0.1);
-        x.domain(data.map(d => d[""]));
+        x.domain(graphData.map(d => d[""]));
 
-    // if (data.length > 5) {
-    //     barSize = x.bandwidth();
-    //     g = g.append("g").attr("transform", "translate(" + -pieWidth / 4 + "," + pieHeight / 2 + ")")
-    //     g.selectAll(".bar")
-    //         .data(data)
-    //         .enter().append("rect")
-    //         .attr("x", d => x(d[""]))
-    //         .attr("y", 6)
-    //         .attr("width", barSize)
-    //         .attr("height", barSize)
-    //         .attr("fill", d => pieColor(d[""]));
-        
-    //     g.append("g")
-    //         .attr("class", "pie-axis")
-    //         .call(d3.axisBottom(x))
-    //         .selectAll("text")
-    //         .attr("y", -barSize / 2)
-    //         .attr("x", 10 + barSize)
-    //         .attr("transform", "rotate(90)")
-    //         .style("text-anchor", "start");
-    // } else {
-    //     arc.append("text")
-    //         .attr("class", "pie-label")
-    //         .attr("text-anchor", "middle")
-    //         .attr("x", d => {
-    //             let a = d.startAngle + (d.endAngle - d.startAngle)/2 - Math.PI/2;
-    //             d.cx = Math.cos(a) * (pieRadius - 45);
-    //             return d.x = Math.cos(a) * (pieRadius + 30);
-    //         })
-    //         .attr("y", d => {
-    //             let a = d.startAngle + (d.endAngle - d.startAngle)/2 - Math.PI/2;
-    //             d.cy = Math.sin(a) * (pieRadius - 45);
-    //             return d.y = Math.sin(a) * (pieRadius + 30);
-    //         })
-    //         .text(d => {
-    //             // console.log(d);
-    //             return d.data.percentage;
-    //         })
-    //         .each((d,i, element) => {
-    //             let bbox = element[i].getBBox();
-    //             d.sx = d.x - bbox.width/2 - 2;
-    //             d.ox = d.x + bbox.width/2 + 2;
-    //             d.sy = d.oy = d.y + 5;
-    //         });
-
-    //     arc.append("path")
-    //         .attr("class", "pointer")
-    //         .style("fill", "none")
-    //         .style("stroke", "white")
-    //         .attr("d", d => {
-    //             if(d.cx > d.ox) {
-    //                 return "M" + d.sx + "," + d.sy + "L" + d.ox + "," + d.oy + " " + d.cx + "," + d.cy;
-    //             } else {
-    //                 return "M" + d.ox + "," + d.oy + "L" + d.sx + "," + d.sy + " " + d.cx + "," + d.cy;
-    //             }
-    //         });
-    // }
-
-    document.getElementById("stateHeader").innerHTML = mapToState(currState);
+    if (mapTooltipDataTypeState === MapTooltipDataType.PERCENTAGE) {
+        document.getElementById("dataCategory").innerHTML = csvData[currFeature][""].toUpperCase();
+        document.getElementById("dataValue").innerHTML = csvData[currFeature][currState].percentage; 
+    }
 }
 
 function setFeature(currGroupVal, currGroupNameVal) {
     document.getElementById("displayedCategory").innerHTML = toDisplayCase(currGroupVal);
     document.getElementById("dropdownMenuButton").innerHTML = currGroupNameVal.toUpperCase();
     currGroup = currGroupVal;
-    getGroup(chartData, currGroupVal, true);
+    graphData = getGroup(csvData, currGroup, true);
     showMap(mapSvg, mapSvgPath);
     redrawDataHandler();
 }   
 
 // Get state color as a percentage of the whole
 function stateMapColor(d) {
-    c = chartData[currFeature][d.id]
+    c = csvData[currFeature][d.id].value;
     return mapColor(c);
 }
 
@@ -364,7 +353,7 @@ function stateMapColor(d) {
 function dataReady(error, us, data) {
     if (error) throw error;
     mapData = us;
-    chartData = dataPreprocess(data);
+    csvData = dataPreprocess(data);
     setFeature(currGroup, currGroupName);
 }
 
@@ -379,18 +368,47 @@ function dataPreprocess(data) {
             }                 
         }
     }
-    
+    formatData(data);
     return data;
+}
+
+// Calculates the value and % of data
+function formatData(data) {
+    let currentGroups, 
+        stateGroupTotal,
+        tempVal,
+        tempPercentage;
+
+    for (let i = 0; i < dataCategoryConfigs.length; i++) {
+        //for each category, get the collective groups for example:
+        //for "age summary" category, grab data on "0 to 20," "21 to 34," etc.
+        currentGroups = getGroup(data, dataCategoryConfigs[i].name, false);
+        for (let state in STATE_MAP_KEYS) {
+            //for each state calculate the total sum of values per group 
+            stateGroupTotal = d3.sum(currentGroups, d => d[state]);
+            for (let groupIndex = 0; groupIndex < currentGroups.length; groupIndex++) {
+                //for each state, calculate the percentage a particular group is to the sum of all the related groups within the category
+                tempVal = currentGroups[groupIndex][state];
+                tempPercentage = Math.round((tempVal / stateGroupTotal) * 100);
+                tempPercentage = (isNaN(tempPercentage) ? 0 : tempPercentage) + "%";
+                
+                currentGroups[groupIndex][state] = {
+                    value: tempVal,
+                    displayValue: dataCategoryConfigs[i].isMonetaryValue ? '$' + numberWithComma(tempVal) : numberWithComma(tempVal),
+                    percentage: tempPercentage
+                };
+            }
+        }
+    }
 }
 
 // Get the correct rows from all data for these features
 function getGroup(data, group, changeFeature = false) {
     start = 0;
     end = 0;
-    let specialFeature = false;
 
     switch(group) {
-        case "population": start = 0; end = 1;
+        case "population": start = 0; end = 1; 
             break;
         case "age detail": start = 1; end = 19;
             break;
@@ -412,35 +430,41 @@ function getGroup(data, group, changeFeature = false) {
             break;
         case "employment type": start = 41; end = 45;
             break;
-        case "employment by industry": start = 45; end = 52;
+        case "employment by industry": start = 45; end = 53;
             break;
-        case "employment by occupation": start = 52; end = 60;
+        case "employment by occupation": start = 53; end = 59; 
             break;
-        case "income": start = 60; end = 62;
+        case "population for whom poverty status is determined": start = 59; end = 61;
             break;
-        case "business": start = 62; end = 64;
+        case "individuals below poverty": start = 61; end = 63;
             break;
-        case "occupied housing units": start = 64; end = 65;
+        case "income": start = 63; end = 65;
             break;
-        case "total number of families": start = 65; end = 66;
+        case "business": start = 66; end = 68; 
             break;
-        case "families in poverty": start = 66; end = 67;
+        case "occupied housing units": start = 68; end = 69;
             break;
-        case "owner occupied units": start = 67; end = 68;
+        case "total number of families": start = 69; end = 70;
             break;
-        case "monthly ownership costs": start = 69; end = 75;
+        case "families in poverty": start = 70; end = 72;
             break;
-        case "gross rent": start = 76; end = 79;
+        case "owner occupied units": start = 72; end = 74;
             break;
-        case "household income": start = 79; end = 80;
+        case "monthly ownership costs": start = 75; end = 81;
             break;
-        case "family income": start = 80; end = 81;
+        case "gross rent": start = 82; end = 89;
             break;
-        case "none owners vs business owners": start = 81; end = 83;
+        case "crowded units": start = 89; end = 90;
             break;
-        case "self employed in incorporated": start = 82; end = 84;
+        case "median household income": start = 90; end = 91;
             break;
-        case "self employed in unincorporated": start = 84; end = 85; specialFeature = true;
+        case "median family income": start = 91; end = 92;
+            break;
+        case "brazilian immigrants vs brazilian immigrants business owners": start = 92; end = 94; 
+            break;
+        case "brazilian immigrant business owners by type": start = 94; end = 96;
+            break;
+        case "english proficiency": start = 96; end = 102;
             break;
         default:
             break;
@@ -448,14 +472,6 @@ function getGroup(data, group, changeFeature = false) {
 
     if(changeFeature) {
         currFeature = d3.min([d3.max([start, currFeature]), end - 1]);
-    }
-
-    if(specialFeature) {
-        let fingle = data.slice(82,83); 
-        data.slice(84,85).forEach(function(i) {
-            fingle.push(i)
-        });
-        return fingle;
     }
 
     return data.slice(start, end);
@@ -468,13 +484,26 @@ function getGroup(data, group, changeFeature = false) {
 // Add resize listener to redraw data charts  
 function redrawDataHandler() {
     document.getElementById("displayedState").innerHTML = mapToState(currState);
+    document.getElementById("stateHeader").innerHTML = mapToState(currState);
     showBarChart(barSvg);
     showPieChart(pieSvg);
 }
 window.addEventListener("resize", redrawDataHandler);
 
 function mouseOverMapHandler(d, i) {
-    mapTip.show(d, i);
+    let toolTipMessage;
+    switch (mapTooltipDataTypeState) {
+        case MapTooltipDataType.WHOLE: 
+            toolTipMessage = csvData[currFeature][""] + " : " + csvData[currFeature][d.id].displayValue; 
+            break;
+        case MapTooltipDataType.PERCENTAGE:
+            toolTipMessage = csvData[currFeature][""] + " : " + csvData[currFeature][d.id].percentage;
+            break;
+        default:
+            toolTipMessage = csvData[currFeature][""] + " : " + csvData[currFeature][d.id].displayValue;
+            break;
+    }
+    mapTip.show(toolTipMessage, i);
     currState = d.id;
     redrawDataHandler();
 }
@@ -486,7 +515,8 @@ function mouseLeaveMapHandler(d, i) {
 }
 
 function clickMapHandler(d, i, mapStates) {
-    if(lastStateRef !== null)
+    
+    if(lastStateRef !== null) 
         lastStateRef.attr("fill", lastStateHighlightColor);
         
     let currStateRef = d3.select(this);
@@ -501,23 +531,25 @@ function clickMapHandler(d, i, mapStates) {
 }
 
 function clickDataPointHandler(d, i) {
-    chartData.forEach((e, i) => {
+    csvData.forEach((e, i) => {
         if(e[""] == d[""]) currFeature = i;
     });
 
     document.getElementById("dataCategory").innerHTML = d[""].toUpperCase();
-    document.getElementById("dataValue").innerHTML = numberWithComma(parseInt(d[currState]));
-    showMap(mapSvg, mapSvgPath);
+    document.getElementById("dataValue").innerHTML = d[currState].displayValue;
+    showMap(mapSvg, mapSvgPath, MapTooltipDataType.WHOLE);
+    document.getElementById("titleContainer").scrollIntoView();
 }
 
 function clickPieHandler(d, i) {
-    chartData.forEach((e, i) => {
+    csvData.forEach((e, i) => {
         if(e[""] == d.data[""]) currFeature = i;
     });
 
     document.getElementById("dataCategory").innerHTML = d.data[""].toUpperCase();
-    document.getElementById("dataValue").innerHTML = d.data["percentage"];
-    showMap(mapSvg, mapSvgPath);
+    document.getElementById("dataValue").innerHTML = d.data[currState].percentage;
+    showMap(mapSvg, mapSvgPath, MapTooltipDataType.PERCENTAGE);
+    document.getElementById("titleContainer").scrollIntoView();
 }
 
 //#endregion
@@ -558,20 +590,24 @@ function toDisplayCase(str) {
 }
 
 function rowSum(data) {
-    s = 0;
-    for(let k in data) {
-        if(k && k !== "percentage") {
-            v = data[k];
-            s = s+v/5;
+    let sum = 0,
+        value= 0;
+
+    for(let key in data) {
+        //for some reason 11 in the csv data does not correspond to any state
+        if(key && key !== "11") {
+            value = data[key].value;
+            sum = sum + value/5;
         }
     }
-    return s;
+    
+    return sum;
 }
 
 function columnMax(group, state) {
     m = -Infinity;
     for(i = 0; i < group.length; ++i) {
-        v = group[i][state];
+        v = group[i][state].value; 
         if(m < v) m = v;
     }
     return m;
