@@ -64,7 +64,7 @@ const MAP_TOOL_TIP_DATA_TYPE = Object.freeze({
 
 const dataCategoryConfigs = [
     { name: "population", isMonetaryValue: false, barChartFilter: ['Rest of Country'], requiresPieChart: true },
-    { name: "population brazilian estimate", isMonetaryValue: false, barChartFilter: ['Rest of Country'], requiresPieChart: true },
+    { name: "population brazilian estimate", isMonetaryValue: false, barChartFilter :['Rest of Country (Brazilian Estimate)'], requiresPieChart: true },
     { name: "age detail", isMonetaryValue: false, barChartFilter: null, requiresPieChart: true },
     { name: "age summary", isMonetaryValue: false, barChartFilter: null, requiresPieChart: true },
     { name: "gender", isMonetaryValue: false, barChartFilter: null, requiresPieChart: true },
@@ -156,7 +156,7 @@ pieSvg.call(pieTip);
 // Load data
 d3.queue()
     .defer(d3.json, "https://d3js.org/us-10m.v1.json")
-    .defer(d3.csv, "https://digaai.com/vresources/")
+    .defer(d3.csv, "http://localhost:3000/resources/")
     .await(dataReady);
 
 //#endregion
@@ -489,7 +489,7 @@ function getGroup(data, group, changeFeature = false) {
             break;
         case "english proficiency": start = 98; end = 104;
             break;
-        case "population brazilian estimate": start = 104; end = 105;
+        case "population brazilian estimate": start = 104; end = 106;
             break;
         default:
             break;
