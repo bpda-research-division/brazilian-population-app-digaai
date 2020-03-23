@@ -156,7 +156,7 @@ pieSvg.call(pieTip);
 // Load data
 d3.queue()
     .defer(d3.json, "https://d3js.org/us-10m.v1.json")
-    .defer(d3.csv, "http://localhost:3000/resources/")
+    .defer(d3.csv, "https://digaai.com/vresources/")
     .await(dataReady);
 
 //#endregion
