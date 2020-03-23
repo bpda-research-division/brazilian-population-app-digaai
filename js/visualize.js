@@ -64,6 +64,7 @@ const MAP_TOOL_TIP_DATA_TYPE = Object.freeze({
 
 const dataCategoryConfigs = [
     { name: "population", isMonetaryValue: false, barChartFilter: ['Rest of Country'], requiresPieChart: true },
+    { name: "population brazilian estimate", isMonetaryValue: false, barChartFilter: ['Rest of Country'], requiresPieChart: true },
     { name: "age detail", isMonetaryValue: false, barChartFilter: null, requiresPieChart: true },
     { name: "age summary", isMonetaryValue: false, barChartFilter: null, requiresPieChart: true },
     { name: "gender", isMonetaryValue: false, barChartFilter: null, requiresPieChart: true },
@@ -487,6 +488,8 @@ function getGroup(data, group, changeFeature = false) {
         case "brazilian immigrant business owners by type": start = 96; end = 98;
             break;
         case "english proficiency": start = 98; end = 104;
+            break;
+        case "population brazilian estimate": start = 104; end = 105;
             break;
         default:
             break;

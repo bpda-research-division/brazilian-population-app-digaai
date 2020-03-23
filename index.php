@@ -49,6 +49,7 @@
                   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <span class="category-header">PERSONS</span>
                     <a class="dropdown-item" href="#" onclick='setFeature("population", "Population")'>Population</a>
+                    <a class="dropdown-item" href="#" onclick='setFeature("population brazilian estimate", "Population (Brazilian Estimates)")'>Population (Brazilian Est.)</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("age detail", "Ages")'>Ages</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("age summary", "Ages Grouped")'>Ages Grouped</a>
                     <a class="dropdown-item" href="#" onclick='setFeature("gender", "Gender")'>Gender</a>
