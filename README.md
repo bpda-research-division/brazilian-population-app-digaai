@@ -1,5 +1,7 @@
 # Digaai Visualization Portal
 
+https://spark-digaai.herokuapp.com/
+
 This is a joint project with Boston University Spark! and Digaai.
 
 It represents census data for Brazilian immigrants in America.
